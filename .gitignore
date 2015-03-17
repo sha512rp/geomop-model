@@ -1,1 +1,4 @@
 data/flow123d
+*.pyc
+*.py.bak
+build/
