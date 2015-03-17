@@ -1,0 +1,1672 @@
+[
+{
+"id" : "c2eeffcd70581dce",
+"input_type" : "Record",
+"type_name" : "Root",
+"type_full_name" : "Root",
+
+"description" : "Root record of JSON input for Flow123d.",
+"keys" : [
+{ "key" : "problem",
+"description" : "Simulation problem to be solved.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "1b711c01c0e1340"
+},
+{ "key" : "pause_after_run",
+"description" : "If true, the program will wait for key press before it terminates.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+}]
+},{
+"id" : "1b711c01c0e1340",
+"input_type" : "AbstractRecord",
+"name" : "Problem",
+"full_name" : "Problem",
+"description" : "The root record of description of particular the problem to solve.",
+"implementations" : [
+"e9818feba0361c74"]},{
+"id" : "e9818feba0361c74",
+"input_type" : "Record",
+"type_name" : "SequentialCoupling",
+"type_full_name" : "SequentialCoupling:Problem",
+
+"description" : "Record with data for a general sequential coupling.\n",
+"implements" : [ "Problem" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "SequentialCoupling" },
+"type" : "b0bf265898e2625b"
+},
+{ "key" : "description",
+"description" : "Short description of the solved problem.\nIs displayed in the main log, and possibly in other text output files.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "29b5533100b6f60f"
+},
+{ "key" : "mesh",
+"description" : "Computational mesh common to all equations.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "c57e1ac33a446313"
+},
+{ "key" : "time",
+"description" : "Simulation time frame and time step.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "d8574f6af69c7e1f"
+},
+{ "key" : "primary_equation",
+"description" : "Primary equation, have all data given.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "89b3f4162d8e9edb"
+},
+{ "key" : "secondary_equation",
+"description" : "The equation that depends (the velocity field) on the result of the primary equation.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ba303a9b13d644e9"
+}]
+},{
+"id" : "b0bf265898e2625b",
+"input_type" : "Selection",
+"name" : "Problem_TYPE_selection",
+"full_name" : "Problem_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "SequentialCoupling",
+"description" : "" }]
+},{
+"id" : "29b5533100b6f60f",
+"input_type" : "String",
+"name" : "String",
+"full_name" : "String"
+},{
+"id" : "c57e1ac33a446313",
+"input_type" : "Record",
+"type_name" : "Mesh",
+"type_full_name" : "Mesh",
+
+"description" : "Record with mesh related data.",
+"keys" : [
+{ "key" : "mesh_file",
+"description" : "Input file with mesh description.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "89a808b8e9515bf8"
+},
+{ "key" : "regions",
+"description" : "List of additional region definitions not contained in the mesh.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "5985ba73963f9447"
+},
+{ "key" : "sets",
+"description" : "List of region set definitions. There are three region sets implicitly defined:\nALL (all regions of the mesh), BOUNDARY (all boundary regions), and BULK (all bulk regions)",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ed43a6296093cd75"
+},
+{ "key" : "partitioning",
+"description" : "Parameters of mesh partitioning algorithms.\n",
+"default" : { "type" : "value at declaration",
+"value" : "any_neighboring" },
+"type" : "61e56a6c5dbf2445"
+}]
+},{
+"id" : "89a808b8e9515bf8",
+"name" : "FileName_input",
+"full_name" : "FileName_input",
+"input_type" : "FileName",
+"file_mode" : "input"
+},{
+"id" : "5985ba73963f9447",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "b9614d55a6c3462e"
+},
+{
+"id" : "ed43a6296093cd75",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "b9f7de6b7bbc0cdb"
+},
+{
+"id" : "61e56a6c5dbf2445",
+"input_type" : "Record",
+"type_name" : "Partition",
+"type_full_name" : "Partition",
+
+"description" : "Setting for various types of mesh partitioning.",
+"reducible_to_key" : "graph_type",
+"keys" : [
+{ "key" : "tool",
+"description" : "Software package used for partitioning. See corresponding selection.",
+"default" : { "type" : "value at declaration",
+"value" : "METIS" },
+"type" : "f9756fb2f66076a1"
+},
+{ "key" : "graph_type",
+"description" : "Algorithm for generating graph and its weights from a multidimensional mesh.",
+"default" : { "type" : "value at declaration",
+"value" : "any_neighboring" },
+"type" : "23a812d749635ca0"
+}]
+},{
+"id" : "f9756fb2f66076a1",
+"input_type" : "Selection",
+"name" : "PartTool",
+"full_name" : "PartTool",
+"description" : "Select the partitioning tool to use.",
+"values" : [
+{ "value" : "0",
+ "name" : "PETSc",
+"description" : "Use PETSc interface to various partitioning tools." },
+{ "value" : "1",
+ "name" : "METIS",
+"description" : "Use direct interface to Metis." }]
+},{
+"id" : "23a812d749635ca0",
+"input_type" : "Selection",
+"name" : "GraphType",
+"full_name" : "GraphType",
+"description" : "Different algorithms to make the sparse graph with weighted edges\nfrom the multidimensional mesh. Main difference is dealing with \nneighborings of elements of different dimension.",
+"values" : [
+{ "value" : "0",
+ "name" : "any_neighboring",
+"description" : "Add edge for any pair of neighboring elements." },
+{ "value" : "1",
+ "name" : "any_wight_lower_dim_cuts",
+"description" : "Same as before and assign higher weight to cuts of lower dimension in order to make them stick to one face." },
+{ "value" : "2",
+ "name" : "same_dimension_neghboring",
+"description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)." }]
+},{
+"id" : "d8574f6af69c7e1f",
+"input_type" : "Record",
+"type_name" : "TimeGovernor",
+"type_full_name" : "TimeGovernor",
+
+"description" : "Setting of the simulation time. (can be specific to one equation)",
+"reducible_to_key" : "max_dt",
+"keys" : [
+{ "key" : "start_time",
+"description" : "Start time of the simulation.",
+"default" : { "type" : "value at declaration",
+"value" : "0.0" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "end_time",
+"description" : "End time of the simulation.",
+"default" : { "type" : "value at read time",
+"value" : "Infinite end time." },
+"type" : "47484ede475775e6"
+},
+{ "key" : "init_dt",
+"description" : "Initial guess for the time step.\nOnly useful for equations that use adaptive time stepping.If set to 0.0, the time step is determined in fully autonomous way if the equation supports it.",
+"default" : { "type" : "value at declaration",
+"value" : "0.0" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "min_dt",
+"description" : "Soft lower limit for the time step. Equation using adaptive time stepping can notsuggest smaller time step, but actual time step could be smaller in order to match prescribed input or output times.",
+"default" : { "type" : "value at read time",
+"value" : "Machine precision." },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "max_dt",
+"description" : "Hard upper limit for the time step. Actual length of the time step is also limitedby input and output times.",
+"default" : { "type" : "value at read time",
+"value" : "Whole time of the simulation if specified, infinity else." },
+"type" : "6b1c4ede475775aa"
+}]
+},{
+"id" : "47484ede475775e6",
+"input_type" : "Double",
+"name" : "Double",
+"full_name" : "Double",
+"range" : [-1.79769e+308, 1.79769e+308]
+},{
+"id" : "6b1c4ede475775aa",
+"input_type" : "Double",
+"name" : "Double",
+"full_name" : "Double",
+"range" : [0, 1.79769e+308]
+},{
+"id" : "89b3f4162d8e9edb",
+"input_type" : "AbstractRecord",
+"name" : "DarcyFlowMH",
+"full_name" : "DarcyFlowMH",
+"description" : "Mixed-Hybrid  solver for saturated Darcy flow.",
+"implementations" : [
+"5851fee969d3391d",
+
+"aac948395795ac4",
+
+"57100bb9fa93904c"]},{
+"id" : "5851fee969d3391d",
+"input_type" : "Record",
+"type_name" : "Steady_MH",
+"type_full_name" : "Steady_MH:DarcyFlowMH",
+
+"description" : "Mixed-Hybrid  solver for STEADY saturated Darcy flow.",
+"implements" : [ "DarcyFlowMH" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Steady_MH" },
+"type" : "951d22f534f4713a"
+},
+{ "key" : "n_schurs",
+"description" : "Number of Schur complements to perform when solving MH sytem.",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92dd201d44a"
+},
+{ "key" : "solver",
+"description" : "Linear solver for MH problem.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "c41013cde28ac4f7"
+},
+{ "key" : "output",
+"description" : "Parameters of output form MH module.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "fd94efde40bcff3f"
+},
+{ "key" : "mortar_method",
+"description" : "Method for coupling Darcy flow between dimensions.",
+"default" : { "type" : "value at declaration",
+"value" : "None" },
+"type" : "77e8d459d5c35386"
+},
+{ "key" : "balance",
+"description" : "Settings for computing mass balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "gravity",
+"description" : "Four-component vector contains potential gradient (positions 0, 1 and 2) and potential constant term (position 3).",
+"default" : { "type" : "value at declaration",
+"value" : "0 0 -1 0" },
+"type" : "29b5533100b6f60f"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "2f19fe521a5239c3"
+}]
+},{
+"id" : "951d22f534f4713a",
+"input_type" : "Selection",
+"name" : "DarcyFlowMH_TYPE_selection",
+"full_name" : "DarcyFlowMH_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "Steady_MH",
+"description" : "" },
+{ "value" : "1",
+ "name" : "Unsteady_MH",
+"description" : "" },
+{ "value" : "2",
+ "name" : "Unsteady_LMH",
+"description" : "" }]
+},{
+"id" : "151ce92dd201d44a",
+"input_type" : "Integer",
+"name" : "Integer",
+"full_name" : "Integer",
+"range" : [0, 2]
+},{
+"id" : "c41013cde28ac4f7",
+"input_type" : "AbstractRecord",
+"name" : "LinSys",
+"full_name" : "LinSys",
+"description" : "Linear solver setting.",
+"implementations" : [
+"9a480c47798196db",
+
+"281b2fb42a1e54be"]},{
+"id" : "9a480c47798196db",
+"input_type" : "Record",
+"type_name" : "Petsc",
+"type_full_name" : "Petsc:LinSys",
+
+"description" : "Solver setting.",
+"implements" : [ "LinSys" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Petsc" },
+"type" : "8350a9dda11719b"
+},
+{ "key" : "r_tol",
+"description" : "Relative residual tolerance (to initial error).",
+"default" : { "type" : "value at declaration",
+"value" : "1.0e-7" },
+"type" : "ab1c4ede475775a9"
+},
+{ "key" : "max_it",
+"description" : "Maximum number of outer iterations of the linear solver.",
+"default" : { "type" : "value at declaration",
+"value" : "10000" },
+"type" : "151ce92d5201d44f"
+},
+{ "key" : "a_tol",
+"description" : "Absolute residual tolerance.",
+"default" : { "type" : "value at declaration",
+"value" : "1.0e-9" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "options",
+"description" : "Options passed to PETSC before creating KSP instead of default setting.",
+"default" : { "type" : "value at declaration",
+"value" : "" },
+"type" : "29b5533100b6f60f"
+}]
+},{
+"id" : "8350a9dda11719b",
+"input_type" : "Selection",
+"name" : "LinSys_TYPE_selection",
+"full_name" : "LinSys_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "Petsc",
+"description" : "" },
+{ "value" : "1",
+ "name" : "Bddc",
+"description" : "" }]
+},{
+"id" : "ab1c4ede475775a9",
+"input_type" : "Double",
+"name" : "Double",
+"full_name" : "Double",
+"range" : [0, 1]
+},{
+"id" : "151ce92d5201d44f",
+"input_type" : "Integer",
+"name" : "Integer",
+"full_name" : "Integer",
+"range" : [0, 2147483647]
+},{
+"id" : "281b2fb42a1e54be",
+"input_type" : "Record",
+"type_name" : "Bddc",
+"type_full_name" : "Bddc:LinSys",
+
+"description" : "Solver setting.",
+"implements" : [ "LinSys" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Bddc" },
+"type" : "8350a9dda11719b"
+},
+{ "key" : "r_tol",
+"description" : "Relative residual tolerance (to initial error).",
+"default" : { "type" : "value at declaration",
+"value" : "1.0e-7" },
+"type" : "ab1c4ede475775a9"
+},
+{ "key" : "max_it",
+"description" : "Maximum number of outer iterations of the linear solver.",
+"default" : { "type" : "value at declaration",
+"value" : "10000" },
+"type" : "151ce92d5201d44f"
+},
+{ "key" : "max_nondecr_it",
+"description" : "Maximum number of iterations of the linear solver with non-decreasing residual.",
+"default" : { "type" : "value at declaration",
+"value" : "30" },
+"type" : "151ce92d5201d44f"
+},
+{ "key" : "number_of_levels",
+"description" : "Number of levels in the multilevel method (=2 for the standard BDDC).",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92d5201d44f"
+},
+{ "key" : "use_adaptive_bddc",
+"description" : "Use adaptive selection of constraints in BDDCML.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+},
+{ "key" : "bddcml_verbosity_level",
+"description" : "Level of verbosity of the BDDCML library: 0 - no output, 1 - mild output, 2 - detailed output.",
+"default" : { "type" : "value at declaration",
+"value" : "0" },
+"type" : "151ce92dd201d44a"
+}]
+},{
+"id" : "282546d52edd4",
+"input_type" : "Bool",
+"name" : "Bool",
+"full_name" : "Bool"
+},{
+"id" : "fd94efde40bcff3f",
+"input_type" : "Record",
+"type_name" : "DarcyMHOutput",
+"type_full_name" : "DarcyMHOutput",
+
+"description" : "Parameters of MH output.",
+"keys" : [
+{ "key" : "output_stream",
+"description" : "Parameters of output stream.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "83b187049e6bac4d"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output file.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "5597c355c1ed0ed8"
+},
+{ "key" : "compute_errors",
+"description" : "SPECIAL PURPOSE. Computing errors pro non-compatible coupling.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+},
+{ "key" : "raw_flow_output",
+"description" : "Output file with raw data form MH module.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "5c42d5b72cb92ff"
+}]
+},{
+"id" : "83b187049e6bac4d",
+"input_type" : "Record",
+"type_name" : "OutputStream",
+"type_full_name" : "OutputStream",
+
+"description" : "Parameters of output.",
+"keys" : [
+{ "key" : "file",
+"description" : "File path to the connected output file.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "5c42d5b72cb92ff"
+},
+{ "key" : "format",
+"description" : "Format of output stream and possible parameters.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "fccf6617954da953"
+},
+{ "key" : "time_step",
+"description" : "Time interval between outputs.\nRegular grid of output time points starts at the initial time of the equation and ends at the end time which must be specified.\nThe start time and the end time are always added. ",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "time_list",
+"description" : "Explicit array of output time points (can be combined with 'time_step'.",
+"default" : { "type" : "value at read time",
+"value" : "List containing the initial time of the equation. \n You can prescribe an empty list to override this behavior." },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "add_input_times",
+"description" : "Add all input time points of the equation, mentioned in the 'input_fields' list, also as the output points.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+}]
+},{
+"id" : "5c42d5b72cb92ff",
+"name" : "FileName_output",
+"full_name" : "FileName_output",
+"input_type" : "FileName",
+"file_mode" : "output"
+},{
+"id" : "fccf6617954da953",
+"input_type" : "AbstractRecord",
+"name" : "OutputTime",
+"full_name" : "OutputTime",
+"description" : "Format of output stream and possible parameters.",
+"implementations" : [
+"7e7e815d8f0ac0f1",
+
+"d38f878a68971700"]},{
+"id" : "7e7e815d8f0ac0f1",
+"input_type" : "Record",
+"type_name" : "vtk",
+"type_full_name" : "vtk:OutputTime",
+
+"description" : "Parameters of vtk output format.",
+"implements" : [ "OutputTime" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "vtk" },
+"type" : "598790df6b23b31b"
+},
+{ "key" : "variant",
+"description" : "Variant of output stream file format.",
+"default" : { "type" : "value at declaration",
+"value" : "ascii" },
+"type" : "1b5802ce6b78beab"
+},
+{ "key" : "parallel",
+"description" : "Parallel or serial version of file format.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+},
+{ "key" : "compression",
+"description" : "Compression used in output stream file format.",
+"default" : { "type" : "value at declaration",
+"value" : "none" },
+"type" : "7127cbcf4491394b"
+}]
+},{
+"id" : "598790df6b23b31b",
+"input_type" : "Selection",
+"name" : "OutputTime_TYPE_selection",
+"full_name" : "OutputTime_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "vtk",
+"description" : "" },
+{ "value" : "1",
+ "name" : "gmsh",
+"description" : "" }]
+},{
+"id" : "1b5802ce6b78beab",
+"input_type" : "Selection",
+"name" : "VTK variant (ascii or binary)",
+"full_name" : "VTK variant (ascii or binary)",
+"description" : "",
+"values" : [
+{ "value" : "1",
+ "name" : "ascii",
+"description" : "ASCII variant of VTK file format" },
+{ "value" : "2",
+ "name" : "binary",
+"description" : "Binary variant of VTK file format (not supported yet)" }]
+},{
+"id" : "7127cbcf4491394b",
+"input_type" : "Selection",
+"name" : "Type of compression of VTK file format",
+"full_name" : "Type of compression of VTK file format",
+"description" : "",
+"values" : [
+{ "value" : "1",
+ "name" : "none",
+"description" : "Data in VTK file format are not compressed" },
+{ "value" : "2",
+ "name" : "zlib",
+"description" : "Data in VTK file format are compressed using zlib (not supported yet)" }]
+},{
+"id" : "d38f878a68971700",
+"input_type" : "Record",
+"type_name" : "gmsh",
+"type_full_name" : "gmsh:OutputTime",
+
+"description" : "Parameters of gmsh output format.",
+"implements" : [ "OutputTime" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "gmsh" },
+"type" : "598790df6b23b31b"
+}]
+},{
+"id" : "ae4d15413e119e57",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "6b1c4ede475775aa"
+},
+{
+"id" : "5597c355c1ed0ed8",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "26f21e6a66a0ba52"
+},
+{
+"id" : "77e8d459d5c35386",
+"input_type" : "Selection",
+"name" : "MH_MortarMethod",
+"full_name" : "MH_MortarMethod",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "None",
+"description" : "Mortar space: P0 on elements of lower dimension." },
+{ "value" : "1",
+ "name" : "P0",
+"description" : "Mortar space: P0 on elements of lower dimension." },
+{ "value" : "2",
+ "name" : "P1",
+"description" : "Mortar space: P1 on intersections, using non-conforming pressures." }]
+},{
+"id" : "d280bda6d317af17",
+"input_type" : "Record",
+"type_name" : "Balance",
+"type_full_name" : "Balance",
+
+"description" : "Balance of a conservative quantity, boundary fluxes and sources.",
+"reducible_to_key" : "balance_on",
+"keys" : [
+{ "key" : "balance_on",
+"description" : "Balance is computed if the value is true.",
+"default" : { "type" : "value at declaration",
+"value" : "true" },
+"type" : "282546d52edd4"
+},
+{ "key" : "format",
+"description" : "Format of output file.",
+"default" : { "type" : "value at declaration",
+"value" : "txt" },
+"type" : "c4f9fd44881c5c15"
+},
+{ "key" : "cumulative",
+"description" : "Compute cumulative balance over time. If true, then balance is calculated at each computational time step, which can slow down the program.",
+"default" : { "type" : "value at declaration",
+"value" : "false" },
+"type" : "282546d52edd4"
+},
+{ "key" : "file",
+"description" : "File name for output of balance.",
+"default" : { "type" : "value at read time",
+"value" : "FileName balance.*" },
+"type" : "5c42d5b72cb92ff"
+}]
+},{
+"id" : "c4f9fd44881c5c15",
+"input_type" : "Selection",
+"name" : "Balance_output_format",
+"full_name" : "Balance_output_format",
+"description" : "Format of output file for balance.",
+"values" : [
+{ "value" : "0",
+ "name" : "legacy",
+"description" : "Legacy format used by previous program versions." },
+{ "value" : "1",
+ "name" : "txt",
+"description" : "Excel format with tab delimiter." },
+{ "value" : "2",
+ "name" : "gnuplot",
+"description" : "Format compatible with GnuPlot datafile with fixed column width." }]
+},{
+"id" : "2f19fe521a5239c3",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "3f897d679fbdf2bd"
+},
+{
+"id" : "aac948395795ac4",
+"input_type" : "Record",
+"type_name" : "Unsteady_MH",
+"type_full_name" : "Unsteady_MH:DarcyFlowMH",
+
+"description" : "Mixed-Hybrid solver for unsteady saturated Darcy flow.",
+"implements" : [ "DarcyFlowMH" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Unsteady_MH" },
+"type" : "951d22f534f4713a"
+},
+{ "key" : "n_schurs",
+"description" : "Number of Schur complements to perform when solving MH sytem.",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92dd201d44a"
+},
+{ "key" : "solver",
+"description" : "Linear solver for MH problem.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "c41013cde28ac4f7"
+},
+{ "key" : "output",
+"description" : "Parameters of output form MH module.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "fd94efde40bcff3f"
+},
+{ "key" : "mortar_method",
+"description" : "Method for coupling Darcy flow between dimensions.",
+"default" : { "type" : "value at declaration",
+"value" : "None" },
+"type" : "77e8d459d5c35386"
+},
+{ "key" : "balance",
+"description" : "Settings for computing mass balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "gravity",
+"description" : "Four-component vector contains potential gradient (positions 0, 1 and 2) and potential constant term (position 3).",
+"default" : { "type" : "value at declaration",
+"value" : "0 0 -1 0" },
+"type" : "29b5533100b6f60f"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "2f19fe521a5239c3"
+},
+{ "key" : "time",
+"description" : "Time governor setting for the unsteady Darcy flow model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d8574f6af69c7e1f"
+}]
+},{
+"id" : "57100bb9fa93904c",
+"input_type" : "Record",
+"type_name" : "Unsteady_LMH",
+"type_full_name" : "Unsteady_LMH:DarcyFlowMH",
+
+"description" : "Lumped Mixed-Hybrid solver for unsteady saturated Darcy flow.",
+"implements" : [ "DarcyFlowMH" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Unsteady_LMH" },
+"type" : "951d22f534f4713a"
+},
+{ "key" : "n_schurs",
+"description" : "Number of Schur complements to perform when solving MH sytem.",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92dd201d44a"
+},
+{ "key" : "solver",
+"description" : "Linear solver for MH problem.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "c41013cde28ac4f7"
+},
+{ "key" : "output",
+"description" : "Parameters of output form MH module.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "fd94efde40bcff3f"
+},
+{ "key" : "mortar_method",
+"description" : "Method for coupling Darcy flow between dimensions.",
+"default" : { "type" : "value at declaration",
+"value" : "None" },
+"type" : "77e8d459d5c35386"
+},
+{ "key" : "balance",
+"description" : "Settings for computing mass balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "gravity",
+"description" : "Four-component vector contains potential gradient (positions 0, 1 and 2) and potential constant term (position 3).",
+"default" : { "type" : "value at declaration",
+"value" : "0 0 -1 0" },
+"type" : "29b5533100b6f60f"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "2f19fe521a5239c3"
+},
+{ "key" : "time",
+"description" : "Time governor setting for the unsteady Darcy flow model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d8574f6af69c7e1f"
+}]
+},{
+"id" : "ba303a9b13d644e9",
+"input_type" : "AbstractRecord",
+"name" : "Transport",
+"full_name" : "Transport",
+"description" : "Secondary equation for transport of substances.",
+"implementations" : [
+"3fce6dc46b626f7d",
+
+"3c79f8f591be27c9",
+
+"a87ce094d473941"]},{
+"id" : "3fce6dc46b626f7d",
+"input_type" : "Record",
+"type_name" : "TransportOperatorSplitting",
+"type_full_name" : "TransportOperatorSplitting:Transport",
+
+"description" : "Explicit FVM transport (no diffusion)\ncoupled with reaction and adsorption model (ODE per element)\n via operator splitting.",
+"implements" : [ "Transport" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "TransportOperatorSplitting" },
+"type" : "94e955e50d64fef1"
+},
+{ "key" : "time",
+"description" : "Time governor setting for the secondary equation.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d8574f6af69c7e1f"
+},
+{ "key" : "balance",
+"description" : "Settings for computing balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "output_stream",
+"description" : "Parameters of output stream.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "83b187049e6bac4d"
+},
+{ "key" : "substances",
+"description" : "Specification of transported substances.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "57a7a5e1a86f94ad"
+},
+{ "key" : "reaction_term",
+"description" : "Reaction model involved in transport.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "32e8e470812ee692"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output file.",
+"default" : { "type" : "value at declaration",
+"value" : "conc" },
+"type" : "b31ada26b4f63e28"
+}]
+},{
+"id" : "94e955e50d64fef1",
+"input_type" : "Selection",
+"name" : "Transport_TYPE_selection",
+"full_name" : "Transport_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "TransportOperatorSplitting",
+"description" : "" },
+{ "value" : "1",
+ "name" : "SoluteTransport_DG",
+"description" : "" },
+{ "value" : "2",
+ "name" : "HeatTransfer_DG",
+"description" : "" }]
+},{
+"id" : "57a7a5e1a86f94ad",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "bb8ed616e3e5a7f6"
+},
+{
+"id" : "3729af215e2350fe",
+"input_type" : "AbstractRecord",
+"name" : "ReactionTerm",
+"full_name" : "ReactionTerm",
+"description" : "Equation for reading information about simple chemical reactions.",
+"implementations" : [
+"d10a5045f6611a1e",
+
+"d4ef9d6295420af",
+
+"bfe06693fb5fa058",
+
+"612ee45675c2e14e",
+
+"523940fb311b6bcd",
+
+"1730997f2b5ec644",
+
+"383f4f5f97af3d1b"]},{
+"id" : "d10a5045f6611a1e",
+"input_type" : "Record",
+"type_name" : "FirstOrderReaction",
+"type_full_name" : "FirstOrderReaction:ReactionTerm",
+
+"description" : "A model of first order chemical reactions (decompositions of a reactant into products).",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "FirstOrderReaction" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "reactions",
+"description" : "An array of first order chemical reactions.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "99790147761cdaf1"
+},
+{ "key" : "ode_solver",
+"description" : "Numerical solver for the system of first order ordinary differential equations coming from the model.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "147cac6173380067"
+}]
+},{
+"id" : "58e17bc45416665e",
+"input_type" : "Selection",
+"name" : "ReactionTerm_TYPE_selection",
+"full_name" : "ReactionTerm_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "FirstOrderReaction",
+"description" : "" },
+{ "value" : "1",
+ "name" : "RadioactiveDecay",
+"description" : "" },
+{ "value" : "2",
+ "name" : "Sorption",
+"description" : "" },
+{ "value" : "3",
+ "name" : "SorptionMobile",
+"description" : "" },
+{ "value" : "4",
+ "name" : "SorptionImmobile",
+"description" : "" },
+{ "value" : "5",
+ "name" : "DualPorosity",
+"description" : "" },
+{ "value" : "6",
+ "name" : "Semchem",
+"description" : "" }]
+},{
+"id" : "99790147761cdaf1",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "a8289bb8add721a2"
+},
+{
+"id" : "147cac6173380067",
+"input_type" : "AbstractRecord",
+"name" : "LinearODESolver",
+"full_name" : "LinearODESolver",
+"description" : "Solver of a linear system of ODEs.",
+"implementations" : [
+"9e88f84e499dc8a6",
+
+"1dfdaf46adc1b540"]},{
+"id" : "9e88f84e499dc8a6",
+"input_type" : "Record",
+"type_name" : "PadeApproximant",
+"type_full_name" : "PadeApproximant:LinearODESolver",
+
+"description" : "Record with an information about pade approximant parameters.",
+"implements" : [ "LinearODESolver" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "PadeApproximant" },
+"type" : "32cf0d026b89e195"
+},
+{ "key" : "nominator_degree",
+"description" : "Polynomial degree of the nominator of Pade approximant.",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92d5201d40e"
+},
+{ "key" : "denominator_degree",
+"description" : "Polynomial degree of the nominator of Pade approximant",
+"default" : { "type" : "value at declaration",
+"value" : "2" },
+"type" : "151ce92d5201d40e"
+}]
+},{
+"id" : "32cf0d026b89e195",
+"input_type" : "Selection",
+"name" : "LinearODESolver_TYPE_selection",
+"full_name" : "LinearODESolver_TYPE_selection",
+"description" : "",
+"values" : [
+{ "value" : "0",
+ "name" : "PadeApproximant",
+"description" : "" },
+{ "value" : "1",
+ "name" : "LinearODEAnalytic",
+"description" : "" }]
+},{
+"id" : "151ce92d5201d40e",
+"input_type" : "Integer",
+"name" : "Integer",
+"full_name" : "Integer",
+"range" : [1, 2147483647]
+},{
+"id" : "1dfdaf46adc1b540",
+"input_type" : "Record",
+"type_name" : "LinearODEAnalytic",
+"type_full_name" : "LinearODEAnalytic:LinearODESolver",
+
+"description" : "Evaluate analytic solution of the system of ODEs.",
+"implements" : [ "LinearODESolver" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "LinearODEAnalytic" },
+"type" : "32cf0d026b89e195"
+}]
+},{
+"id" : "d4ef9d6295420af",
+"input_type" : "Record",
+"type_name" : "RadioactiveDecay",
+"type_full_name" : "RadioactiveDecay:ReactionTerm",
+
+"description" : "A model of a radioactive decay and possibly of a decay chain.",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "RadioactiveDecay" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "decays",
+"description" : "An array of radioactive decays.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "be36e19ca6ac9b1f"
+},
+{ "key" : "ode_solver",
+"description" : "Numerical solver for the system of first order ordinary differential equations coming from the model.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "147cac6173380067"
+}]
+},{
+"id" : "be36e19ca6ac9b1f",
+"input_type" : "Array",
+"range" : [1, 4294967295],
+"subtype" : "3cf35a4e737f77ef"
+},
+{
+"id" : "bfe06693fb5fa058",
+"input_type" : "Record",
+"type_name" : "Sorption",
+"type_full_name" : "Sorption:ReactionTerm",
+
+"description" : "Adsorption model in the reaction term of transport.",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Sorption" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "substances",
+"description" : "Names of the substances that take part in the adsorption model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "eee303f526b992fd"
+},
+{ "key" : "solvent_density",
+"description" : "Density of the solvent.",
+"default" : { "type" : "value at declaration",
+"value" : "1.0" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "substeps",
+"description" : "Number of equidistant substeps, molar mass and isotherm intersections",
+"default" : { "type" : "value at declaration",
+"value" : "1000" },
+"type" : "151ce92d5201d40e"
+},
+{ "key" : "solubility",
+"description" : "Specifies solubility limits of all the adsorbing species.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "table_limits",
+"description" : "Specifies highest aqueous concentration in interpolation table.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "input_fields",
+"description" : "Containes region specific data necessary to construct isotherms.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "515e843c2c8c4869"
+},
+{ "key" : "reaction_liquid",
+"description" : "Reaction model following the sorption in the liquid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "reaction_solid",
+"description" : "Reaction model following the sorption in the solid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output stream.",
+"default" : { "type" : "value at declaration",
+"value" : "conc_solid" },
+"type" : "fa9d385e4f2e9e84"
+}]
+},{
+"id" : "eee303f526b992fd",
+"input_type" : "Array",
+"range" : [1, 4294967295],
+"subtype" : "29b5533100b6f60f"
+},
+{
+"id" : "515e843c2c8c4869",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "6c97d3edddee474f"
+},
+{
+"id" : "fa9d385e4f2e9e84",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "78905dbbb2049b10"
+},
+{
+"id" : "612ee45675c2e14e",
+"input_type" : "Record",
+"type_name" : "SorptionMobile",
+"type_full_name" : "SorptionMobile:ReactionTerm",
+
+"description" : "Adsorption model in the mobile zone, following the dual porosity model.",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "SorptionMobile" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "substances",
+"description" : "Names of the substances that take part in the adsorption model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "eee303f526b992fd"
+},
+{ "key" : "solvent_density",
+"description" : "Density of the solvent.",
+"default" : { "type" : "value at declaration",
+"value" : "1.0" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "substeps",
+"description" : "Number of equidistant substeps, molar mass and isotherm intersections",
+"default" : { "type" : "value at declaration",
+"value" : "1000" },
+"type" : "151ce92d5201d40e"
+},
+{ "key" : "solubility",
+"description" : "Specifies solubility limits of all the adsorbing species.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "table_limits",
+"description" : "Specifies highest aqueous concentration in interpolation table.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "input_fields",
+"description" : "Containes region specific data necessary to construct isotherms.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "515e843c2c8c4869"
+},
+{ "key" : "reaction_liquid",
+"description" : "Reaction model following the sorption in the liquid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "reaction_solid",
+"description" : "Reaction model following the sorption in the solid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output stream.",
+"default" : { "type" : "value at declaration",
+"value" : "conc_solid" },
+"type" : "3b405ebf81d38eca"
+}]
+},{
+"id" : "3b405ebf81d38eca",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "30421673b4db3705"
+},
+{
+"id" : "523940fb311b6bcd",
+"input_type" : "Record",
+"type_name" : "SorptionImmobile",
+"type_full_name" : "SorptionImmobile:ReactionTerm",
+
+"description" : "Adsorption model in the immobile zone, following the dual porosity model.",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "SorptionImmobile" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "substances",
+"description" : "Names of the substances that take part in the adsorption model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "eee303f526b992fd"
+},
+{ "key" : "solvent_density",
+"description" : "Density of the solvent.",
+"default" : { "type" : "value at declaration",
+"value" : "1.0" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "substeps",
+"description" : "Number of equidistant substeps, molar mass and isotherm intersections",
+"default" : { "type" : "value at declaration",
+"value" : "1000" },
+"type" : "151ce92d5201d40e"
+},
+{ "key" : "solubility",
+"description" : "Specifies solubility limits of all the adsorbing species.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "table_limits",
+"description" : "Specifies highest aqueous concentration in interpolation table.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "ae4d15413e119e57"
+},
+{ "key" : "input_fields",
+"description" : "Containes region specific data necessary to construct isotherms.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "515e843c2c8c4869"
+},
+{ "key" : "reaction_liquid",
+"description" : "Reaction model following the sorption in the liquid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "reaction_solid",
+"description" : "Reaction model following the sorption in the solid.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output stream.",
+"default" : { "type" : "value at declaration",
+"value" : "conc_immobile_solid" },
+"type" : "631a5d17c1c5e0b7"
+}]
+},{
+"id" : "631a5d17c1c5e0b7",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "f17bb9c6b032a418"
+},
+{
+"id" : "1730997f2b5ec644",
+"input_type" : "Record",
+"type_name" : "DualPorosity",
+"type_full_name" : "DualPorosity:ReactionTerm",
+
+"description" : "Dual porosity model in transport problems.\nProvides computing the concentration of substances in mobile and immobile zone.\n",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "DualPorosity" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "input_fields",
+"description" : "Containes region specific data necessary to construct dual porosity model.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "4f53aac90f4ef929"
+},
+{ "key" : "scheme_tolerance",
+"description" : "Tolerance according to which the explicit Euler scheme is used or not.Set 0.0 to use analytic formula only (can be slower).",
+"default" : { "type" : "value at declaration",
+"value" : "1e-3" },
+"type" : "6b1c4ede475775aa"
+},
+{ "key" : "reaction_mobile",
+"description" : "Reaction model in mobile zone.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "reaction_immobile",
+"description" : "Reaction model in immobile zone.",
+"default" : { "type" : "optional",
+"value" : "OPTIONAL" },
+"type" : "3729af215e2350fe"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output stream.",
+"default" : { "type" : "value at declaration",
+"value" : "conc_immobile" },
+"type" : "6a8716add7ee5e5c"
+}]
+},{
+"id" : "4f53aac90f4ef929",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "52f854965379fa48"
+},
+{
+"id" : "6a8716add7ee5e5c",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "5b2939a4c63953f6"
+},
+{
+"id" : "383f4f5f97af3d1b",
+"input_type" : "Record",
+"type_name" : "Semchem",
+"type_full_name" : "Semchem:ReactionTerm",
+
+"description" : "Declares infos valid for all reactions. NOT SUPPORTED!!!.",
+"implements" : [ "ReactionTerm" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "Semchem" },
+"type" : "58e17bc45416665e"
+},
+{ "key" : "precision",
+"description" : "How accurate should the simulation be, decimal places(?).",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "151ce8ce3201d44f"
+},
+{ "key" : "temperature",
+"description" : "Isothermal reaction, thermodynamic temperature.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "temp_gf",
+"description" : "Thermodynamic parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "param_afi",
+"description" : "Thermodynamic parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "param_b",
+"description" : "Thermodynamic parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "epsilon",
+"description" : "Thermodynamic parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "47484ede475775e6"
+},
+{ "key" : "time_steps",
+"description" : "Simulation parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "151ce8ce3201d44f"
+},
+{ "key" : "slow_kinetic_steps",
+"description" : "Simulation parameter.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "151ce8ce3201d44f"
+}]
+},{
+"id" : "151ce8ce3201d44f",
+"input_type" : "Integer",
+"name" : "Integer",
+"full_name" : "Integer",
+"range" : [-2147483648, 2147483647]
+},{
+"id" : "32e8e470812ee692",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "532b9f8f00a2e833"
+},
+{
+"id" : "b31ada26b4f63e28",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "8ee7608195b9c01f"
+},
+{
+"id" : "3c79f8f591be27c9",
+"input_type" : "Record",
+"type_name" : "SoluteTransport_DG",
+"type_full_name" : "SoluteTransport_DG:Transport",
+
+"description" : "DG solver for solute transport.",
+"implements" : [ "Transport" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "SoluteTransport_DG" },
+"type" : "94e955e50d64fef1"
+},
+{ "key" : "time",
+"description" : "Time governor setting for the secondary equation.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d8574f6af69c7e1f"
+},
+{ "key" : "balance",
+"description" : "Settings for computing balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "output_stream",
+"description" : "Parameters of output stream.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "83b187049e6bac4d"
+},
+{ "key" : "substances",
+"description" : "Names of transported substances.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "eee303f526b982ce"
+},
+{ "key" : "solver",
+"description" : "Linear solver for MH problem.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "9a480c47798196db"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "c1791b74fdd0fe26"
+},
+{ "key" : "dg_variant",
+"description" : "Variant of interior penalty discontinuous Galerkin method.",
+"default" : { "type" : "value at declaration",
+"value" : "non-symmetric" },
+"type" : "63d5c736bdd40bf1"
+},
+{ "key" : "dg_order",
+"description" : "Polynomial order for finite element in DG method (order 0 is suitable if there is no diffusion/dispersion).",
+"default" : { "type" : "value at declaration",
+"value" : "1" },
+"type" : "151ce92dd201d44b"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output file.",
+"default" : { "type" : "value at declaration",
+"value" : "conc" },
+"type" : "5de5d50356090bde"
+}]
+},{
+"id" : "eee303f526b982ce",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "29b5533100b6f60f"
+},
+{
+"id" : "c1791b74fdd0fe26",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "8812ef4c61558e13"
+},
+{
+"id" : "63d5c736bdd40bf1",
+"input_type" : "Selection",
+"name" : "DG_variant",
+"full_name" : "DG_variant",
+"description" : "Type of penalty term.",
+"values" : [
+{ "value" : "-1",
+ "name" : "non-symmetric",
+"description" : "non-symmetric weighted interior penalty DG method" },
+{ "value" : "0",
+ "name" : "incomplete",
+"description" : "incomplete weighted interior penalty DG method" },
+{ "value" : "1",
+ "name" : "symmetric",
+"description" : "symmetric weighted interior penalty DG method" }]
+},{
+"id" : "151ce92dd201d44b",
+"input_type" : "Integer",
+"name" : "Integer",
+"full_name" : "Integer",
+"range" : [0, 3]
+},{
+"id" : "5de5d50356090bde",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "2fec6dedc194d975"
+},
+{
+"id" : "a87ce094d473941",
+"input_type" : "Record",
+"type_name" : "HeatTransfer_DG",
+"type_full_name" : "HeatTransfer_DG:Transport",
+
+"description" : "DG solver for heat transfer.",
+"implements" : [ "Transport" ],
+"keys" : [
+{ "key" : "TYPE",
+"description" : "Sub-record selection.",
+"default" : { "type" : "value at declaration",
+"value" : "HeatTransfer_DG" },
+"type" : "94e955e50d64fef1"
+},
+{ "key" : "time",
+"description" : "Time governor setting for the secondary equation.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d8574f6af69c7e1f"
+},
+{ "key" : "balance",
+"description" : "Settings for computing balance.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "d280bda6d317af17"
+},
+{ "key" : "output_stream",
+"description" : "Parameters of output stream.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "83b187049e6bac4d"
+},
+{ "key" : "solver",
+"description" : "Linear solver for MH problem.",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "9a480c47798196db"
+},
+{ "key" : "input_fields",
+"description" : "",
+"default" : { "type" : "obligatory",
+"value" : "OBLIGATORY" },
+"type" : "b1a0c3426d8df783"
+},
+{ "key" : "dg_variant",
+"description" : "Variant of interior penalty discontinuous Galerkin method.",
+"default" : { "type" : "value at declaration",
+"value" : "non-symmetric" },
+"type" : "63d5c736bdd40bf1"
+},
+{ "key" : "dg_order",
+"description" : "Polynomial order for finite element in DG method (order 0 is suitable if there is no diffusion/dispersion).",
+"default" : { "type" : "value at declaration",
+"value" : "1" },
+"type" : "151ce92dd201d44b"
+},
+{ "key" : "output_fields",
+"description" : "List of fields to write to output file.",
+"default" : { "type" : "value at declaration",
+"value" : "temperature" },
+"type" : "902b4e080e08a561"
+}]
+},{
+"id" : "b1a0c3426d8df783",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "918c5b536809a19"
+},
+{
+"id" : "902b4e080e08a561",
+"input_type" : "Array",
+"range" : [0, 4294967295],
+"subtype" : "11f541233ed52118"
+},
+{}]
