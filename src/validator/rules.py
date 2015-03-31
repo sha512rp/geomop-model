@@ -33,3 +33,9 @@ def check_double(val, min=float("-inf"), max=float("inf")):
 
     return True
 
+
+def check_bool(val):
+    if not isinstance(val, bool):
+        raise TypeError("Expecting type Bool")
+
+    return True

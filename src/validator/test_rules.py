@@ -76,6 +76,20 @@ class TestBasicRules(unittest.TestCase):
         with self.assertRaises(ValueTooBig):
             rules.check_double(5, min=0, max=3.14);
 
+    def test_check_bool(self):
+        """
+            check_bool(val)
+        """
+        self.assertEquals(rules.check_bool(True), True);
+        self.assertEquals(rules.check_bool(False), True);
+
+        with self.assertRaises(TypeError):
+            rules.check_double(0);
+            rules.check_double(1);
+            rules.check_double("1");
+            rules.check_double("false");
+            rules.check_double({});
+            rules.check_double([]);
 
 if __name__ == '__main__':
     unittest.main()
