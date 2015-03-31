@@ -15,12 +15,12 @@ class TestBasicRules(unittest.TestCase):
     Integer
     Double
     Bool
+    String
 
     Record
     AbstractRecord
     Selection
     Array
-    String
     FileName
 
     Null?
@@ -84,12 +84,23 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_bool(False), True);
 
         with self.assertRaises(TypeError):
-            rules.check_double(0);
-            rules.check_double(1);
-            rules.check_double("1");
-            rules.check_double("false");
-            rules.check_double({});
-            rules.check_double([]);
+            rules.check_bool(0);
+            rules.check_bool(1);
+            rules.check_bool("1");
+            rules.check_bool("false");
+            rules.check_bool({});
+            rules.check_bool([]);
+
+    def test_check_string(self):
+        """
+            check_string(val)
+        """
+        self.assertEquals(rules.check_string("abc"), True);
+
+        with self.assertRaises(TypeError):
+            rules.check_string(0);
+            rules.check_string({});
+            rules.check_string([]);
 
 if __name__ == '__main__':
     unittest.main()

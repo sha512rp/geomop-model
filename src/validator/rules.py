@@ -39,3 +39,10 @@ def check_bool(val):
         raise TypeError("Expecting type Bool")
 
     return True
+
+
+def check_string(val):
+    if not isinstance(val, str):
+        raise TypeError("Expecting type String")
+
+    return True
