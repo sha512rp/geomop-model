@@ -6,20 +6,10 @@ Errors of data validation
 """
 
 
-class TypeError(Exception):
-    def __init__(self, expected, value):
-
-        message = "Type mismatch: expected '" + expected.__name__ + "', but '" + \
-                    value.__class__.__name__ + "' was provided."
-
-        # Call the base class constructor with the parameters it needs
-        super(TypeError, self).__init__(message)
-
-
 class ValueTooSmall(Exception):
     def __init__(self, expected):
 
-        message = "Expected value larger or equal to " + str(expected) + "."
+        message = "Expected value larger or equal to " + str(expected) + ""
 
         # Call the base class constructor with the parameters it needs
         super(ValueTooSmall, self).__init__(message)
@@ -28,7 +18,7 @@ class ValueTooSmall(Exception):
 class ValueTooBig(Exception):
     def __init__(self, expected):
 
-        message = "Expected value smaller or equal to " + str(expected) + "."
+        message = "Expected value smaller or equal to " + str(expected) + ""
 
         # Call the base class constructor with the parameters it needs
         super(ValueTooBig, self).__init__(message)

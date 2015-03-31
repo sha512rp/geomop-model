@@ -9,14 +9,28 @@ from errors import *
 
 
 def check_integer(val, min=float("-inf"), max=float("inf")):
-	if not isinstance(val, int):
-		raise TypeError(int, val)
+    if not isinstance(val, int):
+        raise TypeError("Expecting 'int' type")
 
-	if (val < min):
-		raise ValueTooSmall(min)
+    if (val < min):
+        raise ValueTooSmall(min)
 
-	if (val > max):
-		raise ValueTooBig(max)
+    if (val > max):
+        raise ValueTooBig(max)
 
-	return True
+    return True
+
+
+def check_double(val, min=float("-inf"), max=float("inf")):
+    if not isinstance(val, (int, float)):
+        raise TypeError("Expecting 'float' type")
+
+    if (val < min):
+        raise ValueTooSmall(min)
+
+    if (val > max):
+        raise ValueTooBig(max)
+    # except 
+
+    return True
 

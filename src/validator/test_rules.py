@@ -12,14 +12,15 @@ from errors import *
 class TestBasicRules(unittest.TestCase):
     """
     Basic rules include:
+    Integer
+    Double
+
     Record
     AbstractRecord
-    Integer
     Selection
     Array
     String
     FileName
-    Double
     Bool
 
     Null?
@@ -51,6 +52,29 @@ class TestBasicRules(unittest.TestCase):
 
         with self.assertRaises(ValueTooBig):
             rules.check_integer(5, min=0, max=3);
+
+    def test_check_double(self):
+        """
+            check_double(val)
+            check_double(val, min=a, max=b)
+        """
+        self.assertEquals(rules.check_double(3.14), True);
+        self.assertEquals(rules.check_double(-2), True);        # accepts int
+
+        with self.assertRaises(TypeError):
+            rules.check_double("3.14");
+            rules.check_double({});
+            rules.check_double([]);
+
+        self.assertEquals(rules.check_double(3.14, min=0, max=3.14), True);
+        self.assertEquals(rules.check_double(2.5, min=0, max=3.14), True);
+        self.assertEquals(rules.check_double(0, min=0, max=3.14), True);
+
+        with self.assertRaises(ValueTooSmall):
+            rules.check_double(-1.3, min=0, max=3.14);
+
+        with self.assertRaises(ValueTooBig):
+            rules.check_double(5, min=0, max=3.14);
 
 
 if __name__ == '__main__':
