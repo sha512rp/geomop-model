@@ -10,7 +10,10 @@ from errors import *
 
 def check_integer(val, min=float("-inf"), max=float("inf")):
     if not isinstance(val, int):
-        raise TypeError("Expecting 'int' type")
+        try:
+            val = int(val)      # string conversion: "3" -> 3
+        except ValueError:
+            raise TypeError("Expecting 'int' type")
 
     if (val < min):
         raise ValueTooSmall(min)
@@ -30,7 +33,6 @@ def check_double(val, min=float("-inf"), max=float("inf")):
 
     if (val > max):
         raise ValueTooBig(max)
-    # except 
 
     return True
 

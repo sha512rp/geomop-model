@@ -36,10 +36,11 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_integer(3), True);
         self.assertEquals(rules.check_integer(-2), True);
+        self.assertEquals(rules.check_integer("3"), True);
 
         with self.assertRaises(TypeError):
             rules.check_integer(2.5);
-            rules.check_integer("3");
+            rules.check_integer("3.4");
             rules.check_integer({});
             rules.check_integer([]);
 
