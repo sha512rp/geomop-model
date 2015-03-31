@@ -14,6 +14,7 @@ class TestBasicRules(unittest.TestCase):
     Basic rules include:
     Integer
     Double
+    Bool
 
     Record
     AbstractRecord
@@ -21,7 +22,6 @@ class TestBasicRules(unittest.TestCase):
     Array
     String
     FileName
-    Bool
 
     Null?
     """
@@ -36,11 +36,10 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_integer(3), True);
         self.assertEquals(rules.check_integer(-2), True);
-        self.assertEquals(rules.check_integer("3"), True);
 
         with self.assertRaises(TypeError):
             rules.check_integer(2.5);
-            rules.check_integer("3.4");
+            rules.check_integer("3");
             rules.check_integer({});
             rules.check_integer([]);
 
@@ -61,9 +60,9 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_double(3.14), True);
         self.assertEquals(rules.check_double(-2), True);        # accepts int
-        self.assertEquals(rules.check_double("3.14"), True);
 
         with self.assertRaises(TypeError):
+            rules.check_double("3.14")
             rules.check_double({});
             rules.check_double([]);
 
