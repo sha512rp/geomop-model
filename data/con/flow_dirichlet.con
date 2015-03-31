@@ -5,7 +5,7 @@
     mesh = {
       mesh_file = "${INPUT}/test05.msh"
     }, 
-
+// comment
     primary_equation = {
       TYPE = "Steady_MH", 
       n_schurs = 2, 
@@ -14,6 +14,10 @@
         { region = "plane",
           anisotropy = 1
         },
+        /* 
+        multirow
+         comment
+        */
         { region = ".bc_south",
           bc_type = "dirichlet",
           bc_pressure = 0
