@@ -61,9 +61,9 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_double(3.14), True);
         self.assertEquals(rules.check_double(-2), True);        # accepts int
+        self.assertEquals(rules.check_double("3.14"), True);
 
         with self.assertRaises(TypeError):
-            rules.check_double("3.14");
             rules.check_double({});
             rules.check_double([]);
 

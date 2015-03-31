@@ -26,7 +26,10 @@ def check_integer(val, min=float("-inf"), max=float("inf")):
 
 def check_double(val, min=float("-inf"), max=float("inf")):
     if not isinstance(val, (int, float)):
-        raise TypeError("Expecting 'float' type")
+        try:
+            val = float(val)      # string conversion: "3.14" -> 3.14
+        except ValueError:
+            raise TypeError("Expecting 'float' type")
 
     if (val < min):
         raise ValueTooSmall(min)
