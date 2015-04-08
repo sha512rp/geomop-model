@@ -22,6 +22,7 @@ class ValueTooBig(Exception):
 
 class InvalidOption(Exception):
     def __init__(self, selection):
-        message = "Invalid option for selection " + str(selection) + ""
+        message = "Invalid option for selection " + \
+                str(selection.name) + ""
 
         super(InvalidOption, self).__init__(message)

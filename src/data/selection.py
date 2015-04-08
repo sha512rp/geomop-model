@@ -21,6 +21,7 @@ class Selection:
 
     def __init__(self, name, options, **kwargs):
         self.options = copy.copy(options)
+        self.name = name
         Selection.selections[name] = self
 
         for name in Selection._allowed_kwargs:
