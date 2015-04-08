@@ -44,3 +44,6 @@ class Selection:
                 return name
         raise KeyError
 
+    def has(self, name):
+        return (name in self.options)
+

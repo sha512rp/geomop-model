@@ -29,6 +29,8 @@ class TestSelection(unittest.TestCase):
         GraphType = Selection.selection('GraphType')
         self.assertEqual(GraphType.to_int('any_wight_lower_dim_cuts'), 1)
         self.assertEqual(GraphType.to_str(2), 'same_dimension_neghboring')
+        self.assertEqual(GraphType.has('any_neighboring'), True)
+        self.assertEqual(GraphType.has('invalid'), False)
 
         with self.assertRaises(KeyError):
             GraphType.to_str(3)
