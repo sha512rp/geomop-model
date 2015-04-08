@@ -48,7 +48,9 @@ def check_string(val):
     return True
 
 
-def check_selection():
-
-    return True
+def check_selection(selection, value):
+    if (selection.has(value)):
+        return True
+    else:
+        raise InvalidOption(selection)
 

@@ -108,16 +108,20 @@ class TestBasicRules(unittest.TestCase):
             check_selection(selection, value)
         """
 
-        # options = Selection()
+        options = {
+                    'any_neighboring': 0,\
+                    'any_wight_lower_dim_cuts': 1,\
+                    'same_dimension_neghboring': 2 \
+        }
+        GraphType = Selection('GraphType', options)
+        MySelection = Selection('MySelection', {'a': 44,})
 
-        # self.assertEquals(rules.check_selection("abc"), True);
+        self.assertEquals(rules.check_selection(GraphType,
+            'any_wight_lower_dim_cuts'), True);
 
-        # with self.assertRaises(TypeError):
-        #     rules.check_selection(0);
-        #     rules.check_selection({});
-        #     rules.check_selection([]);
-
-        pass
+        with self.assertRaises(InvalidOption):
+            rules.check_selection(MySelection,
+            'any_wight_lower_dim_cuts')
 
 if __name__ == '__main__':
     unittest.main()
