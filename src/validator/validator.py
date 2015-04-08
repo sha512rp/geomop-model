@@ -6,4 +6,9 @@ Validator for Flow123D CON files
 """
 
 class Validator:
-    pass
+    def parse_rules(self, rules):
+        """
+        Parse Flow123D JSON objects representing documentation
+        and extract rule sets.
+        """
+        pass

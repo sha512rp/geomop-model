@@ -127,5 +127,32 @@ class TestBasicRules(unittest.TestCase):
                 'invalid')
 
 
+
+class TestRuleParser(unittest.TestCase):
+    pass
+
+
+    # def test_rule_parser_selection(self):
+    #     """
+    #         single rule parse test
+    #     """
+    #     rules = [{
+    #             "id" : "f9756fb2f66076a1",
+    #             "input_type" : "Selection",
+    #             "name" : "PartTool",
+    #             "full_name" : "PartTool",
+    #             "description" : "Select the partitioning tool to use.",
+    #             "values" : [
+    #             { "value" : "0",
+    #              "name" : "PETSc",
+    #             "description" : "Use PETSc interface to various partitioning tools." },
+    #             { "value" : "1",
+    #              "name" : "METIS",
+    #             "description" : "Use direct interface to Metis." }]
+    #             }]
+    #     self.rule_parser.parse(rules)
+    #     self.rule_parser.rules['f9756fb2f66076a1'] = 
+
+
 if __name__ == '__main__':
     unittest.main()

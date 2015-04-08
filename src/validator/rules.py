@@ -8,6 +8,27 @@ Basic rules for data validation
 from geomopcontext.validator.errors import *
 
 
+# class RuleParser:
+#     def __init__(self):
+#         self.rules = {}
+
+#     def parse(self, rules):
+#         """
+#         Parse Flow123D JSON objects representing documentation
+#         and extract rule sets.
+#         """
+#         for rule in rules:
+
+
+
+class Rule:
+    def __init__(self, id, name, full_name):
+        self.id = id
+        self.name = name
+        self.full_name = full_name
+
+
+
 def check_integer(val, min=float("-inf"), max=float("inf")):
     if not isinstance(val, int):
         raise TypeError("Expecting type Integer")
@@ -53,4 +74,5 @@ def check_selection(selection, value):
         return True
     else:
         raise InvalidOption(selection)
+
 
