@@ -29,10 +29,11 @@ class TestSelection(unittest.TestCase):
                         "description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)."
                 }]
 
-        Selection('GraphType', self.values)
+        self.selections = {}
+        self.selections['GraphType'] = Selection('GraphType', self.values)
 
     def test_selection_exists(self):
-        GraphType = Selection.selection('GraphType')
+        GraphType = self.selections['GraphType']
         self.assertEqual(GraphType.to_str(2), 'same_dimension_neghboring')
         self.assertEqual(GraphType.has('any_neighboring'), True)
         self.assertEqual(GraphType.has('invalid'), False)

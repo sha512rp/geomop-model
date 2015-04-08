@@ -13,12 +13,7 @@ class Selection:
     """
         Stores selection type and its values.
     """
-    selections = {}
     _allowed_kwargs = ['full_name', 'description']
-
-    @staticmethod
-    def selection(name):
-        return Selection.selections[name]
 
     def __init__(self, name, values, **kwargs):
         self.name = name
@@ -36,10 +31,6 @@ class Selection:
             temp = objectview(copy.copy(item))      # copy to ensure no runtime changes
             temp.value = int(temp.value)            # cast to integer
             self.values[temp.name] = temp
-
-        # add reference to class dict for later retrival
-        Selection.selections[name] = self
-
 
     def to_str(self, value):
         """
