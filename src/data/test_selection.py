@@ -39,7 +39,6 @@ class TestSelection(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             GraphType.to_str(3)
-            GraphType.to_int('invalid')
 
     def test_selection_kwargs(self):
         full_name = "My Awesome Selection"
