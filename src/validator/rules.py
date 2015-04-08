@@ -5,7 +5,7 @@ Basic rules for data validation
 @author: Tomas Krizek
 """
 
-from errors import *
+from geomopcontext.validator.errors import *
 
 
 def check_integer(val, min=float("-inf"), max=float("inf")):
@@ -46,3 +46,9 @@ def check_string(val):
         raise TypeError("Expecting type String")
 
     return True
+
+
+def check_selection():
+
+    return True
+

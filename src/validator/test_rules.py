@@ -6,8 +6,9 @@ Tests for rules
 """
 
 import unittest
-import rules
-from errors import *
+import geomopcontext.validator.rules as rules
+from geomopcontext.validator.errors import *
+from geomopcontext.data.selection import Selection
 
 class TestBasicRules(unittest.TestCase):
     """
@@ -21,8 +22,8 @@ class TestBasicRules(unittest.TestCase):
     AbstractRecord
     Selection
     Array
-    FileName
 
+    FileName
     Null?
     """
 
@@ -101,6 +102,22 @@ class TestBasicRules(unittest.TestCase):
             rules.check_string(0);
             rules.check_string({});
             rules.check_string([]);
+
+    def test_check_selection(self):
+        """
+            check_selection(selection, value)
+        """
+
+        # options = Selection()
+
+        # self.assertEquals(rules.check_selection("abc"), True);
+
+        # with self.assertRaises(TypeError):
+        #     rules.check_selection(0);
+        #     rules.check_selection({});
+        #     rules.check_selection([]);
+
+        pass
 
 if __name__ == '__main__':
     unittest.main()
