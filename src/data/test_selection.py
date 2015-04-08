@@ -15,15 +15,21 @@ class TestSelection(unittest.TestCase):
     """
 
     def setUp(self):
-        options = {
-                    'any_neighboring': 0,\
-                    'any_wight_lower_dim_cuts': 1,\
-                    'same_dimension_neghboring': 2 \
-        }
+        self.values = [  {
+                        "value" : "0",
+                        "name" : "any_neighboring",
+                        "description" : "Add edge for any pair of neighboring elements."
+                    }, {
+                        "value" : "1",
+                        "name" : "any_wight_lower_dim_cuts",
+                        "description" : "Same as before and assign higher weight to cuts of lower dimension in order to make them stick to one face."
+                    }, {
+                        "value" : "2",
+                        "name" : "same_dimension_neghboring",
+                        "description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)."
+                }]
 
-        Selection('GraphType', options)
-
-        options['any_wight_lower_dim_cuts'] = 6  # shouldn't be effective
+        Selection('GraphType', self.values)
 
     def test_selection_exists(self):
         GraphType = Selection.selection('GraphType')
@@ -38,10 +44,9 @@ class TestSelection(unittest.TestCase):
     def test_selection_kwargs(self):
         full_name = "My Awesome Selection"
         description = "The best Selection of them all - MySelection!"
-        options = {'a': 1}
         invalid_arg = "invalid"
 
-        MySelection = Selection('MySelection', options, 
+        MySelection = Selection('MySelection', self.values, 
             full_name=full_name, description=description, 
             invalid_arg=invalid_arg)
 

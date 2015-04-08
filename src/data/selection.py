@@ -6,6 +6,7 @@ Selection class
 """
 
 import copy
+from collections import namedtuple
 
 
 class Selection:
@@ -19,26 +20,42 @@ class Selection:
     def selection(name):
         return Selection.selections[name]
 
-    def __init__(self, name, options, **kwargs):
-        self.options = copy.copy(options)
+    def __init__(self, name, values, **kwargs):
         self.name = name
-        Selection.selections[name] = self
 
-        for name in Selection._allowed_kwargs:
+        # initialize additional arguments
+        for arg in Selection._allowed_kwargs:
             try:
-                self.__setattr__(name, kwargs[name])
+                self.__setattr__(arg, kwargs[arg])
             except:
                 pass
 
-    def to_str(self, item):
+        # initialize values dict
+        self.values = {}
+        for item in values:
+            temp = objectview(copy.copy(item))      # copy to ensure no runtime changes
+            temp.value = int(temp.value)            # cast to integer
+            self.values[temp.name] = temp
+
+        # add reference to class dict for later retrival
+        Selection.selections[name] = self
+
+
+    def to_str(self, value):
         """
         Get str repr from int value.
         """
-        for name, value in self.options.items():
-            if value == item:
+        for name, item in self.values.items():
+            if item.value == value:
                 return name
         raise KeyError
 
     def has(self, name):
-        return (name in self.options)
+        return (name in self.values)
+
+
+class objectview(object):
+    def __init__(self, d):
+        self.__dict__ = d
+
 
