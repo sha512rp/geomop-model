@@ -11,7 +11,7 @@ from geomopcontext.data.selection import Selection
 
 class TestSelection(unittest.TestCase):
     """
-        Test generating selections (enum subclasses)
+        Test generating and using selections.
     """
 
     def setUp(self):
@@ -27,7 +27,6 @@ class TestSelection(unittest.TestCase):
 
     def test_selection_exists(self):
         GraphType = Selection.selection('GraphType')
-        self.assertEqual(GraphType.to_int('any_wight_lower_dim_cuts'), 1)
         self.assertEqual(GraphType.to_str(2), 'same_dimension_neghboring')
         self.assertEqual(GraphType.has('any_neighboring'), True)
         self.assertEqual(GraphType.has('invalid'), False)

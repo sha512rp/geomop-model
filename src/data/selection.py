@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-SelectionFactory for generating enums
+Selection class
 
 @author: Tomas Krizek
 """
@@ -28,12 +28,6 @@ class Selection:
                 self.__setattr__(name, kwargs[name])
             except:
                 pass
-
-    def to_int(self, name):
-        """
-        Get int value from str repr.
-        """
-        return self.options[name]
 
     def to_str(self, item):
         """
