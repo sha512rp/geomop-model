@@ -119,9 +119,9 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_selection(GraphType,
             'any_wight_lower_dim_cuts'), True);
 
-        #with self.assertRaises(InvalidOption):
-        rules.check_selection(MySelection,
-            'any_wight_lower_dim_cuts')
+        with self.assertRaises(InvalidOption):
+            rules.check_selection(MySelection,
+                'any_wight_lower_dim_cuts')
 
 if __name__ == '__main__':
     unittest.main()
