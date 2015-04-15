@@ -101,7 +101,7 @@ class TestBasicRules(unittest.TestCase):
 
     def test_check_selection(self):
         """
-            check_selection(selection, value)
+            check_selection(val, selection)
         """
 
         values = [  {
@@ -116,14 +116,13 @@ class TestBasicRules(unittest.TestCase):
                 }]
         GraphType = Selection('GraphType', values)
 
-        self.assertEquals(rules.check_selection(GraphType,
-            'any_wight_lower_dim_cuts'), True);
-        self.assertEquals(rules.check_selection(GraphType,
-            'any_wight_LOWER_dim_cuts'), True);
+        self.assertEquals(rules.check_selection(
+            'any_wight_lower_dim_cuts', GraphType), True);
+        self.assertEquals(rules.check_selection(
+            'any_wight_LOWER_dim_cuts', GraphType), True);
 
         with self.assertRaises(InvalidOption):
-            rules.check_selection(GraphType,
-                'invalid')
+            rules.check_selection('invalid',GraphType)
 
     def test_check_filename(self):
         """

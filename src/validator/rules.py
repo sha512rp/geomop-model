@@ -69,7 +69,7 @@ def check_string(val):
     return True
 
 
-def check_selection(selection, val):
+def check_selection(val, selection):
     if (selection.has(val)):
         return True
     else:
