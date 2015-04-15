@@ -69,10 +69,15 @@ def check_string(val):
     return True
 
 
-def check_selection(selection, value):
-    if (selection.has(value)):
+def check_selection(selection, val):
+    if (selection.has(val)):
         return True
     else:
         raise InvalidOption(selection)
 
 
+def check_filename(val):
+    """
+    Placeholder for FileName validation.
+    """
+    return check_string(val)

@@ -126,6 +126,17 @@ class TestBasicRules(unittest.TestCase):
             rules.check_selection(GraphType,
                 'invalid')
 
+    def test_check_filename(self):
+        """
+            check_filename(val)
+            Currently works same as check_string.
+        """
+        self.assertEquals(rules.check_filename("abc"), True);
+
+        with self.assertRaises(TypeError):
+            rules.check_filename(0);
+            rules.check_filename({});
+            rules.check_filename([]);
 
 
 class TestRuleParser(unittest.TestCase):
