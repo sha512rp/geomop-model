@@ -105,15 +105,12 @@ class TestBasicRules(unittest.TestCase):
         """
 
         values = [  {
-                        "value" : "0",
                         "name" : "any_neighboring",
                         "description" : "Add edge for any pair of neighboring elements."
                     }, {
-                        "value" : "1",
                         "name" : "any_wight_lower_dim_cuts",
                         "description" : "Same as before and assign higher weight to cuts of lower dimension in order to make them stick to one face."
                     }, {
-                        "value" : "2",
                         "name" : "same_dimension_neghboring",
                         "description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)."
                 }]
@@ -121,6 +118,8 @@ class TestBasicRules(unittest.TestCase):
 
         self.assertEquals(rules.check_selection(GraphType,
             'any_wight_lower_dim_cuts'), True);
+        self.assertEquals(rules.check_selection(GraphType,
+            'any_wight_LOWER_dim_cuts'), True);
 
         with self.assertRaises(InvalidOption):
             rules.check_selection(GraphType,

@@ -25,13 +25,12 @@ class TestBasicRules(unittest.TestCase):
                 "name" : "PartTool",
                 "full_name" : "PartTool",
                 "description" : "Select the partitioning tool to use.",
-                "values" : [
-                { "value" : "0",
-                 "name" : "PETSc",
-                "description" : "Use PETSc interface to various partitioning tools." },
-                { "value" : "1",
-                 "name" : "METIS",
-                "description" : "Use direct interface to Metis." }]
+                "values" : [{
+                    "name" : "PETSc",
+                    "description" : "Use PETSc interface to various partitioning tools."
+                    },{
+                    "name" : "METIS",
+                    "description" : "Use direct interface to Metis." }]
                 }]
         validator = Validator()
         validator.parse_rules(rules)
