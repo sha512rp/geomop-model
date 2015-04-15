@@ -7,6 +7,7 @@ Tests for validator
 
 import unittest
 from geomopcontext.validator.validator import Validator
+from geomopcontext.validator.errors import *
 
 class TestBasicRules(unittest.TestCase):
 
@@ -18,7 +19,7 @@ class TestBasicRules(unittest.TestCase):
         pass
 
     def test_validator_selection(self):
-        rule = {
+        rules = [{
                 "id" : "f9756fb2f66076a1",
                 "input_type" : "Selection",
                 "name" : "PartTool",
@@ -31,5 +32,13 @@ class TestBasicRules(unittest.TestCase):
                 { "value" : "1",
                  "name" : "METIS",
                 "description" : "Use direct interface to Metis." }]
-                }
-        pass
+                }]
+        validator = Validator()
+        validator.parse_rules(rules)
+        rule_id = 'f9756fb2f66076a1'
+
+        self.assertEqual(validator.validate('PETSc', rule_id), True)
+        self.assertEqual(validator.validate('petsc', rule_id), True)
+
+        excpetions = validator.validate('asd', rule_id)
+        self.assertIs(exceptions['/'], InvalidOption)
