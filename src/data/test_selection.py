@@ -16,15 +16,12 @@ class TestSelection(unittest.TestCase):
 
     def setUp(self):
         self.values = [  {
-                        "value" : "0",
                         "name" : "any_neighboring",
                         "description" : "Add edge for any pair of neighboring elements."
                     }, {
-                        "value" : "1",
                         "name" : "any_wight_lower_dim_cuts",
                         "description" : "Same as before and assign higher weight to cuts of lower dimension in order to make them stick to one face."
                     }, {
-                        "value" : "2",
                         "name" : "same_dimension_neghboring",
                         "description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)."
                 }]
@@ -34,12 +31,13 @@ class TestSelection(unittest.TestCase):
 
     def test_selection_exists(self):
         GraphType = self.selections['GraphType']
-        self.assertEqual(GraphType.to_str(2), 'same_dimension_neghboring')
         self.assertEqual(GraphType.has('any_neighboring'), True)
         self.assertEqual(GraphType.has('invalid'), False)
 
-        with self.assertRaises(KeyError):
-            GraphType.to_str(3)
+    def test_selection_case_insensitive(self):
+        GraphType = self.selections['GraphType']
+        self.assertEqual(GraphType.has('ANY_NEIGHBORING'), True)
+        self.assertEqual(GraphType.has('INVALID'), False)
 
     def test_selection_kwargs(self):
         full_name = "My Awesome Selection"

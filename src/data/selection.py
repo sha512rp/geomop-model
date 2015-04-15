@@ -29,20 +29,15 @@ class Selection:
         self.values = {}
         for item in values:
             temp = objectview(copy.copy(item))      # copy to ensure no runtime changes
-            temp.value = int(temp.value)            # cast to integer
             self.values[temp.name] = temp
 
-    def to_str(self, value):
-        """
-        Get str repr from int value.
-        """
-        for name, item in self.values.items():
-            if item.value == value:
-                return name
-        raise KeyError
-
     def has(self, name):
-        return (name in self.values)
+        """
+        Determines if name is a possible value of this selection.
+        Case-insensitive.
+        """
+        return (name.lower() in [val.name.lower() for key, val \
+            in self.values.items()])
 
 
 class objectview(object):
