@@ -21,7 +21,6 @@ class Rule:
             except KeyError:
                 pass
         try:        # parse extra parameters based on input_type
-            print('_parse_%s' % self.input_type.lower())
             getattr(self, '_parse_%s' % self.input_type.lower())(data)
         except AttributeError:
             self.kwargs = {}
