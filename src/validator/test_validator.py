@@ -6,17 +6,11 @@ Tests for validator
 """
 
 import unittest
-from geomopcontext.validator.validator import Validator
+
+from geomopcontext.validator.validator import Validator, ValidationResult, Severity
 from geomopcontext.validator.errors import *
 
-class TestBasicRules(unittest.TestCase):
-
-    def setUp(self):
-        # rules = 
-
-        # validator = Validator()
-        # validator.parse_rules()
-        pass
+class TestValidator(unittest.TestCase):
 
     def test_validator_selection(self):
         rules = [{
@@ -32,12 +26,31 @@ class TestBasicRules(unittest.TestCase):
                     "name" : "METIS",
                     "description" : "Use direct interface to Metis." }]
                 }]
-        validator = Validator()
-        validator.parse_rules(rules)
-        rule_id = 'f9756fb2f66076a1'
+        validator = Validator(rules)
 
-        self.assertEqual(validator.validate('PETSc', rule_id), True)
-        self.assertEqual(validator.validate('petsc', rule_id), True)
+        self.assertEqual(validator.validate('PETSc').valid, True)
+        self.assertEqual(validator.validate('petsc').valid, True)
 
-        excpetions = validator.validate('asd', rule_id)
-        self.assertIs(exceptions['/'], InvalidOption)
+        result = validator.validate('asd')
+        self.assertIsInstance(result.messages[0]['exception'], InvalidOption)
+        self.assertEqual(result.valid, False)
+
+
+class TestValidationResult(unittest.TestCase):
+
+    def test_report(self):
+        result = ValidationResult()
+        self.assertEqual(result.valid, True)
+
+        result.report({'severity': Severity.debug})
+        self.assertEqual(result.valid, True)
+
+        result.report({'severity': Severity.info})
+        self.assertEqual(result.valid, True)
+
+        result.report({'severity': Severity.warn})
+        self.assertEqual(result.valid, True)
+
+        result.report({'severity': Severity.error})
+        self.assertEqual(result.valid, False)
+

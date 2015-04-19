@@ -18,9 +18,7 @@ class TestBasicRules(unittest.TestCase):
     Bool
     String
     Selection
-
     FileName
-    Null?
     """
 
     def setUp(self):
@@ -34,7 +32,7 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_integer(3), True);
         self.assertEquals(rules.check_integer(-2), True);
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationTypeError):
             rules.check_integer(2.5);
             rules.check_integer("3");
             rules.check_integer({});
@@ -58,7 +56,7 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_double(3.14), True);
         self.assertEquals(rules.check_double(-2), True);        # accepts int
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationTypeError):
             rules.check_double("3.14")
             rules.check_double({});
             rules.check_double([]);
@@ -80,7 +78,7 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_bool(True), True);
         self.assertEquals(rules.check_bool(False), True);
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationTypeError):
             rules.check_bool(0);
             rules.check_bool(1);
             rules.check_bool("1");
@@ -94,7 +92,7 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_string("abc"), True);
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationTypeError):
             rules.check_string(0);
             rules.check_string({});
             rules.check_string([]);
@@ -131,7 +129,7 @@ class TestBasicRules(unittest.TestCase):
         """
         self.assertEquals(rules.check_filename("abc"), True);
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValidationTypeError):
             rules.check_filename(0);
             rules.check_filename({});
             rules.check_filename([]);

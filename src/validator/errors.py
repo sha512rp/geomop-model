@@ -6,21 +6,29 @@ Errors of data validation
 """
 
 
-class ValueTooSmall(Exception):
+class ValidationError(Exception):
+    pass
+
+
+class ValidationTypeError(ValidationError):
+    pass
+
+
+class ValueTooSmall(ValidationError):
     def __init__(self, expected):
         message = "Expected value larger or equal to " + str(expected) + ""
 
         super(ValueTooSmall, self).__init__(message)
 
 
-class ValueTooBig(Exception):
+class ValueTooBig(ValidationError):
     def __init__(self, expected):
         message = "Expected value smaller or equal to " + str(expected) + ""
 
         super(ValueTooBig, self).__init__(message)
 
 
-class InvalidOption(Exception):
+class InvalidOption(ValidationError):
     def __init__(self, selection):
         message = "Invalid option for selection " + \
                 str(selection.name) + ""
