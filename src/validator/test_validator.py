@@ -114,7 +114,6 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(result.valid, False)
         self.assertIsInstance(result.messages[0]['exception'], ValidationTypeError)
 
-
     def test_validator_selection(self):
         rules = [{
                 "id" : "f9756fb2f66076a1",
@@ -137,6 +136,42 @@ class TestValidator(unittest.TestCase):
         result = validator.validate('asd')
         self.assertEqual(result.valid, False)
         self.assertIsInstance(result.messages[0]['exception'], InvalidOption)
+
+    def test_validator_array(self):
+        rules = [{
+                "id" : "eee3033466b9ffa2",
+                "input_type" : "Array",
+                "range" : [2, 2],
+                "subtype" : "6b1c4ede475775aa"
+                }, {
+                "id" : "6b1c4ede475775aa",
+                "input_type" : "Double",
+                "name" : "Double",
+                "full_name" : "Double",
+                "range" : [0, 1.79769e+308]
+                }]
+        validator = Validator(rules)
+
+        self.assertEqual(validator.validate([0, 43.2]).valid, True)
+
+        result = validator.validate([3.14, -1])
+        self.assertEqual(result.valid, False)
+        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+
+        result = validator.validate([1])
+        self.assertEqual(result.valid, False)
+        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+
+        result = validator.validate([1 2 3])
+        self.assertEqual(result.valid, False)
+        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+
+        result = validator.validate([-1 'a'])
+        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+
+        result = validator.validate('asd')
+        self.assertEqual(result.valid, False)
+        self.assertIsInstance(result.messages[0]['exception'], ValidationTypeError)
 
 
 class TestValidationResult(unittest.TestCase):
