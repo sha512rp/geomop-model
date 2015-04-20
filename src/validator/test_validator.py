@@ -156,7 +156,7 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(validator.validate([0, 1.5]).valid, True)
         self.assertEqual(validator.validate([0, 3.2, 3, 8.4]).valid, True)
 
-        result = validator.validate([-1 0 'a' 3.3 10.6])
+        result = validator.validate([-1, 0, 'a', 3.3, 10.6])
         self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
         self.assertIsInstance(result.messages[1]['exception'], ValidationTypeError)
         self.assertIsInstance(result.messages[2]['exception'], ValueTooBig)
@@ -182,7 +182,7 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(result.valid, False)
         self.assertIsInstance(result.messages[0]['exception'], NotEnoughItems)
 
-        result = validator.validate([1 2 3])
+        result = validator.validate([1, 2, 3])
         self.assertEqual(result.valid, False)
         self.assertIsInstance(result.messages[0]['exception'], TooManyItems)
 

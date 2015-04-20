@@ -39,6 +39,8 @@ class Validator:
         rule = self.rules[rule_id]
         if rule.input_type in Validator.SCALARS:
             self._validate_scalar(data, rule)
+        elif rule.input_type == 'Array':
+            self._validate_array(data, rule)
         elif rule.input_type == 'Record':
             self._validate_record(data, rule)
         elif rule.input_type == 'AbstractRecord':
@@ -56,6 +58,11 @@ class Validator:
                                 'message': str(e),\
                                 'exception': e})
             # TODO position of exception
+
+    def _validate_array(self, data, rule):
+        self._validate_scalar(data, rule)  # validate array dimension
+        for item in data:
+            self._validate(item, rule.subtype)
 
 
 class Severity(Enum):
