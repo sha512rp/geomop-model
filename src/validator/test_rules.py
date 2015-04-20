@@ -134,6 +134,25 @@ class TestBasicRules(unittest.TestCase):
             rules.check_filename({});
             rules.check_filename([]);
 
+    def test_check_array(self):
+        """
+            check_array(val)
+            check_array(val, min=a, max=b)
+        """
+        self.assertEquals(rules.check_array([]), True);
+        self.assertEquals(rules.check_array([1, 2], min=1, max=5), True);
+        self.assertEquals(rules.check_array([1], min=1, max=5), True);
+        self.assertEquals(rules.check_array([1, 2, 3, 4, 5], min=1, max=5), True);
+
+        with self.assertRaises(ValidationTypeError):
+            rules.check_array(23)
+
+        with self.assertRaises(NotEnoughItems):
+            rules.check_array([1, 2], min=3, max=5);
+
+        with self.assertRaises(TooManyItems):
+            rules.check_array([1, 2, 3], min=0, max=2);
+
 
 class TestRuleParser(unittest.TestCase):
     pass

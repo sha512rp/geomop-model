@@ -43,6 +43,7 @@ class Rule:
     def _parse_array(self, data):
         self.kwargs = {'min': data['range'][0],\
                      'max': data['range'][1]}
+        self.subtype = data['subtype']
 
      # TODO implement _parse_record, _parse_abstract_record
 
@@ -100,3 +101,15 @@ def check_filename(val, file_mode=None):
     Placeholder for FileName validation.
     """
     return check_string(val)
+
+
+def check_array(val, min=0, max=float("inf")):
+    if not isinstance(val, (list, str)):
+        raise ValidationTypeError("Expecting type Array")
+
+    if len(val) < min:
+        raise NotEnoughItems(min)
+    elif len(val) > max:
+        raise TooManyItems(max)
+
+    return True
