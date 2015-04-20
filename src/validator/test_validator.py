@@ -141,6 +141,30 @@ class TestValidator(unittest.TestCase):
         rules = [{
                 "id" : "eee3033466b9ffa2",
                 "input_type" : "Array",
+                "range" : [0, 4294967295],
+                "subtype" : "6b1c4ede475775aa"
+                }, {
+                "id" : "6b1c4ede475775aa",
+                "input_type" : "Double",
+                "name" : "Double",
+                "full_name" : "Double",
+                "range" : [0, 10.5]
+                }]
+        validator = Validator(rules)
+
+        self.assertEqual(validator.validate([]).valid, True)
+        self.assertEqual(validator.validate([0, 1.5]).valid, True)
+        self.assertEqual(validator.validate([0, 3.2, 3, 8.4]).valid, True)
+
+        result = validator.validate([-1 0 'a' 3.3 10.6])
+        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+        self.assertIsInstance(result.messages[1]['exception'], ValidationTypeError)
+        self.assertIsInstance(result.messages[2]['exception'], ValueTooBig)
+
+    def test_validator_array_length(self):
+        rules = [{
+                "id" : "eee3033466b9ffa2",
+                "input_type" : "Array",
                 "range" : [2, 2],
                 "subtype" : "6b1c4ede475775aa"
                 }, {
@@ -154,24 +178,13 @@ class TestValidator(unittest.TestCase):
 
         self.assertEqual(validator.validate([0, 43.2]).valid, True)
 
-        result = validator.validate([3.14, -1])
-        self.assertEqual(result.valid, False)
-        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
-
         result = validator.validate([1])
         self.assertEqual(result.valid, False)
-        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
+        self.assertIsInstance(result.messages[0]['exception'], NotEnoughItems)
 
         result = validator.validate([1 2 3])
         self.assertEqual(result.valid, False)
-        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
-
-        result = validator.validate([-1 'a'])
-        self.assertIsInstance(result.messages[0]['exception'], ValueTooSmall)
-
-        result = validator.validate('asd')
-        self.assertEqual(result.valid, False)
-        self.assertIsInstance(result.messages[0]['exception'], ValidationTypeError)
+        self.assertIsInstance(result.messages[0]['exception'], TooManyItems)
 
 
 class TestValidationResult(unittest.TestCase):
