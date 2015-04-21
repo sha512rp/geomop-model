@@ -5,40 +5,65 @@ Contains format specification class and methods to parse it from JSON.
 @author: Tomas Krizek
 """
 
-class FormatSpecification:
+from geomopcontext.data.selection import Selection
+
+
+class FormatSpec:
     """
     Contains complete input type specification (ITS).
 
     Functions:
-        - return ITS for any path in the tree structure
         - return default value for any path
     """
 
     def __init__(self, json_data):
         """Initialize the class by parsing ITS from JSON data."""
         self.types = {}
+        self.name_collisions = []
         self.root_id = json_data[0]['id']      # set root type
         for data in json_data:
             its = InputTypeSpecification(data)
-            self.types[its.id] = its
+            self.types[its.id] = its  # register by id
             try:
-                self.types[its.name] = its
+                name = its.name
             except AttributeError:
-                pass
+                pass  # its does not have to have a name
+            else:  # register by name
+                # try to remove the name from dict
+                if self.types.pop(its.name, None) is not None:
+                    # name exists in dict -> it is removed and name
+                    # is added to collisions
+                    self.name_collisions = its.name
+                else:
+                    # removal failed, name is not in dict
+                    # if name is not a collision, register it
+                    if name not in self.name_collisions:
+                        self.types[its.name] = its
 
     def get_its(self, key):
-        """Return ITS for given id or name."""
-        return self.types[key]
+        """
+        Return ITS for given id, name or path.
+
+        id: randomly assigned hex number (from JSON file)
+        name: human readable class name
+        path: points to any node in the tree, starts with /
+        """
+        try:  # assume id or name
+            return self.types[key]
+        except KeyError:
+            # try to interpet key as path
+            # TODO implement
+            return None
 
 
 
-class InputTypeSpecification:
+class InputTypeSpec:
     OPTIONAL_PARAMS = ['name', 'full_name', 'description']
 
     def __init__(self, data):
         self.id = data['id']
         self.input_type = data['input_type']
-        for param in Rule.OPTIONAL_PARAMS:       # parse optional parameters
+        for param in InputTypeSpec.OPTIONAL_PARAMS:       # parse optional parameters
             try:
                 setattr(self, param, data[param])
             except KeyError:
@@ -49,21 +74,20 @@ class InputTypeSpecification:
             self.kwargs = {}
 
     def _parse_integer(self, data):
-        self.kwargs = {'min': data['range'][0],\
-                     'max': data['range'][1]}
+        self.min = data['range'][0]
+        self.max = data['range'][1]
 
     def _parse_double(self, data):
-        self.kwargs = {'min': data['range'][0],\
-                     'max': data['range'][1]}
+        self.min = data['range'][0]
+        self.max = data['range'][1]
 
     def _parse_selection(self, data):
         self.selection = Selection(self.name, data['values'])
-        self.kwargs = {'selection': self.selection}
 
     def _parse_filename(self, data):
-        self.kwargs = {'file_mode': data['file_mode']}
+        self.file_mode = data['file_mode']
 
     def _parse_array(self, data):
-        self.kwargs = {'min': data['range'][0],\
-                     'max': data['range'][1]}
+        self.min = data['range'][0]
+        self.max = data['range'][1]
         self.subtype = data['subtype']
