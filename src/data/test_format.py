@@ -6,9 +6,7 @@ Tests for format package.
 """
 
 import unittest
-from geomopcontext.data.format import FormatSpec, InputTypeSpec
-from geomopcontext.validator.errors import *
-from geomopcontext.data.selection import Selection
+from geomopcontext.data.format import *
 
 
 class TestFormatSpec(unittest.TestCase):
@@ -42,7 +40,7 @@ class TestInputTypeSpec(unittest.TestCase):
     AbstractRecord
     """
 
-    def test_its_integer(self):
+    def test_integer(self):
         data = {
                 "id" : "151ce92dd201d44b",
                 "input_type" : "Integer",
@@ -61,7 +59,7 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.max, 3)
         self.assertEqual(its.description, "description")
 
-    def test_validator_double(self):
+    def test_double(self):
         data = {
                 "id" : "6b1c4ede475775aa",
                 "input_type" : "Double",
@@ -80,7 +78,7 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.max, 1.79769e+308)
         self.assertEqual(its.description, "description")
 
-    def test_validator_bool(self):
+    def test_bool(self):
         data = {
                 "id" : "282546d52edd4",
                 "input_type" : "Bool",
@@ -96,7 +94,7 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.full_name, "Bool")
         self.assertEqual(its.description, "description")
 
-    def test_validator_string(self):
+    def test_string(self):
         data = {
                 "id" : "29b5533100b6f60f",
                 "input_type" : "String",
@@ -112,7 +110,7 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.full_name, "String")
         self.assertEqual(its.description, "description")
 
-    def test_validator_filename(self):
+    def test_filename(self):
         data = {
                 "id" : "89a808b8e9515bf8",
                 "input_type" : "FileName",
@@ -130,19 +128,19 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.file_mode, "input")
         self.assertEqual(its.description, "description")
 
-    def test_validator_selection(self):
+    def test_selection(self):
         data = {
                 "id" : "f9756fb2f66076a1",
                 "input_type" : "Selection",
                 "name" : "PartTool",
                 "full_name" : "PartTool",
-                "description" : "Select the partitioning tool to use.",
+                "description" : "description",
                 "values" : [{
                     "name" : "PETSc",
-                    "description" : "Use PETSc interface to various partitioning tools."
+                    "description" : "PETSc description"
                     },{
                     "name" : "METIS",
-                    "description" : "Use direct interface to Metis." }]
+                    "description" : "METIS description" }]
                 }
         its = InputTypeSpec(data)
 
@@ -150,12 +148,11 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.input_type, "Selection")
         self.assertEqual(its.name, "PartTool")
         self.assertEqual(its.full_name, "PartTool")
-        self.assertEqual(its.description,
-            "Select the partitioning tool to use.")
-        # TODO values
+        self.assertEqual(its.description, "description")
+        self.assertEqual(its.values.PETSc.description, "PETSc description")
+        self.assertEqual(its.values.METIS.description, "METIS description")
 
-
-    def test_validator_array(self):
+    def test_array(self):
         data = {
                 "id" : "eee3033466b9ffa2",
                 "input_type" : "Array",
@@ -170,4 +167,35 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.min, 0)
         self.assertEqual(its.max, 4294967295)
         self.assertEqual(its.subtype, "6b1c4ede475775aa")
+
+
+class TestSelectionValues(unittest.TestCase):
+    
+    def setUp(self):
+        data = [{
+                "name" : "PETSc",
+                "description" : "PETSc description"
+            },{
+                "name" : "METIS",
+                "description" : "METIS description"
+            }]
+        self.values = SelectionValues(data)
+
+
+    def test_dot_notation(self):
+        self.assertEqual(self.values.PETSc.description, "PETSc description")
+        self.assertEqual(self.values.METIS.description, "METIS description")
+
+    def test_length(self):
+        self.assertEqual(len(self.values), 2)
+
+    def test_iteration(self):
+        names = ["PETSc", "METIS"]
+        for item in self.values:
+            self.assertIn(item.name, names)
+
+    def test_contains(self):
+        names = ["PETSc", "METIS"]
+        for name in names:
+            self.assertIn(name, self.values)
 
