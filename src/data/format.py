@@ -79,8 +79,11 @@ class InputTypeSpec:
     def _parse_record(self, data):
         self.type_name = data['type_name']
         self.type_full_name = data['type_full_name']
-        self.type_name = data['type_name']
         self.keys = KeySet(data['keys'])
+
+    def _parse_abstractrecord(self, data):
+        self.default_descendant = data['default_descendant']
+        self.implementations = data['implementations']
 
 
 class KeySet:
