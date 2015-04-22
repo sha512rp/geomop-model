@@ -10,18 +10,30 @@ from geomopcontext.data.format import *
 
 
 class TestFormatSpec(unittest.TestCase):
-    """
-    Basic rules include:
-    Integer
-    Double
-    Bool
-    String
-    Selection
-    FileName
-    """
 
     def setUp(self):
-        pass
+        data = [
+            {
+            "id" : "cde734cca8c6d536",
+            "input_type" : "Record",
+            "type_name" : "Root",
+            "type_full_name" : "Root",
+
+            "description" : "Root record of JSON input for Flow123d.",
+            "keys" : [
+            { "key" : "problem",
+            "description" : "Simulation problem to be solved.",
+            "default" : { "type" : "obligatory",
+            "value" : "OBLIGATORY" },
+            "type" : "1b71c90f49db780"
+            },
+            { "key" : "pause_after_run",
+            "description" : "If true, the program will wait for key press before it terminates.",
+            "default" : { "type" : "value at declaration",
+            "value" : "false" },
+            "type" : "282546d52edd4"
+            }]
+        }]
 
 
 class TestInputTypeSpec(unittest.TestCase):
@@ -198,4 +210,32 @@ class TestSelectionValues(unittest.TestCase):
         names = ["PETSc", "METIS"]
         for name in names:
             self.assertIn(name, self.values)
+
+
+class TestObjectView(unittest.TestCase):
+    
+    def test_dot_notation(self):
+        data = {
+            'computer1': {
+                'name': 'sharp-pc',
+                'equipment': {
+                    'mouse': 'Logitech G500'
+                },
+                'components': {
+                    'cpu': {
+                        'brand': 'Intel',
+                        'name': 'Intel i5',
+                        'freq': '3.2 Ghz'
+                    },
+                    'gpu': 'ATI Radeon 880M'
+                }
+            },
+            'computer2': {
+                'name': 'old-pc'
+            }
+        }
+        computers = ObjectView(data)
+        self.assertEqual(computers.computer1.name, 'sharp-pc')
+        self.assertEqual(computers.computer1.components.cpu.brand, 'Intel')
+        self.assertEqual(computers.computer2.name, 'old-pc')
 

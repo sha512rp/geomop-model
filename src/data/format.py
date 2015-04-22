@@ -17,12 +17,12 @@ class FormatSpec:
         - return default value for any path
     """
 
-    def __init__(self, json_data):
+    def __init__(self, data):
         """Initialize the class by parsing ITS from JSON data."""
         self.types = {}
         self.name_collisions = []
-        self.root_id = json_data[0]['id']      # set root type
-        for item in json_data:
+        self.root_id = data[0]['id']      # set root type
+        for item in data:
             its = InputTypeSpecification(item)
             self.types[its.id] = its  # register by id
             try:
@@ -101,13 +101,9 @@ class SelectionValues:
         Supports iteration, length and access through dot notation.
     """
 
-    class objectview(object):
-        def __init__(self, d):
-            self.__dict__ = d
-
     def __init__(self, data):
         for item in data:
-            value = SelectionValues.objectview(copy.copy(item))
+            value = ObjectView(copy.deepcopy(item))
             self.__dict__[value.name] = value
 
     def __len__(self):
@@ -119,4 +115,12 @@ class SelectionValues:
 
     def __contains__(self, item):
         return item in self.__dict__.keys()
+
+
+class ObjectView(object):
+    def __init__(self, d):
+        self.__dict__ = copy.deepcopy(d)
+        for key, value in self.__dict__.items():
+            if isinstance(value, dict):
+                self.__dict__[key] = ObjectView(value)
 
