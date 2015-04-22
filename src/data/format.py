@@ -66,7 +66,7 @@ class InputTypeSpec:
         self.max = data['range'][1]
 
     def _parse_selection(self, data):
-        self.values = KeySet(data['values'])
+        self.values = KeySet(data['values'], key_label='name')
 
     def _parse_filename(self, data):
         self.file_mode = data['file_mode']
@@ -76,10 +76,16 @@ class InputTypeSpec:
         self.max = data['range'][1]
         self.subtype = data['subtype']
 
+    def _parse_record(self, data):
+        self.type_name = data['type_name']
+        self.type_full_name = data['type_full_name']
+        self.type_name = data['type_name']
+        self.keys = KeySet(data['keys'])
+
 
 class KeySet:
     """
-    KeySet is constructed from dict.
+    KeySet is constructed from list of dicts.
 
     Supports:
       - dot notation: returns value for keyset.key.subkey
@@ -88,10 +94,13 @@ class KeySet:
       - contains: key in keyset
     """
 
-    def __init__(self, data):
+    def __init__(self, data, key_label='key'):
+        """
+            key_label: this identifier will be used as a key
+        """
         for item in data:
             value = ObjectView(item)
-            self.__dict__[value.name] = value
+            self.__dict__[item[key_label]] = value
 
     def __len__(self):
         return len(self.__dict__)

@@ -194,12 +194,6 @@ class TestInputTypeSpec(unittest.TestCase):
                 "value" : "OBLIGATORY" },
                 "type" : "29b5533100b6f60f"
                 },
-                { "key" : "id",
-                "description" : "The ID of the region",
-                "default" : { "type" : "obligatory",
-                "value" : "OBLIGATORY" },
-                "type" : "151ce92d5201d44f"
-                },
                 { "key" : "element_list",
                 "description" : "list of elements",
                 "default" : { "type" : "optional",
@@ -211,12 +205,10 @@ class TestInputTypeSpec(unittest.TestCase):
 
             self.assertEqual(its.id, "b9614d55a6c3462e")
             self.assertEqual(its.input_type, "Record")
-            # self.assertEqual(its.type_name, "Region")
-            # self.assertEqual(its.type_full_name, "Region")
+            self.assertEqual(its.type_name, "Region")
+            self.assertEqual(its.type_full_name, "Region")
             self.assertEqual(its.description, "Definition of region of elements.")
-            # self.assertEqual(its.keys.name, 0)
-            # self.assertEqual(its.max, 4294967295)
-            # self.assertEqual(its.subtype, "6b1c4ede475775aa")
+            self.assertEqual(its.keys.name.default.type, 'obligatory')
 
 
 class TestKeySet(unittest.TestCase):
@@ -229,7 +221,7 @@ class TestKeySet(unittest.TestCase):
                 "name" : "METIS",
                 "description" : "METIS description"
             }]
-        self.values = KeySet(data)
+        self.values = KeySet(data, key_label='name')
 
 
     def test_dot_notation(self):
