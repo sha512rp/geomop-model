@@ -79,13 +79,13 @@ class InputTypeSpec:
 
 class KeySet:
     """
-        KeySet is constructed from dict.
+    KeySet is constructed from dict.
 
-        Supports:
-          - dot notation: returns value for keyset.key.subkey
-          - iteration: returns values of all possible keys (top level)
-          - length: returns number of keys (top level)
-          - contains: key in keyset
+    Supports:
+      - dot notation: returns value for keyset.key.subkey
+      - iteration: returns values of all possible keys (top level)
+      - length: returns number of keys (top level)
+      - contains: key in keyset
     """
 
     def __init__(self, data):
@@ -104,7 +104,12 @@ class KeySet:
         return item in self.__dict__.keys()
 
 
-class ObjectView(object):
+class ObjectView:
+    """
+    ObjectView transforms dict into object with dot notation.
+    Supports nested dicts.
+    No reference to original dict.
+    """
     def __init__(self, d):
         self.__dict__ = copy.deepcopy(d)
         for key, value in self.__dict__.items():
