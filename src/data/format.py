@@ -20,36 +20,19 @@ class FormatSpec:
     def __init__(self, data):
         """Initialize the class by parsing ITS from JSON data."""
         self.types = {}
-        self.name_collisions = []
         self.root_id = data[0]['id']      # set root type
         for item in data:
             its = InputTypeSpecification(item)
             self.types[its.id] = its  # register by id
-            try:
-                name = its.name
-            except AttributeError:
-                pass  # its does not have to have a name
-            else:  # register by name
-                # try to remove the name from dict
-                if self.types.pop(its.name, None) is not None:
-                    # name exists in dict -> it is removed and name
-                    # is added to collisions
-                    self.name_collisions = its.name
-                else:
-                    # removal failed, name is not in dict
-                    # if name is not a collision, register it
-                    if name not in self.name_collisions:
-                        self.types[its.name] = its
 
     def get_its(self, key):
         """
-        Return ITS for given id, name or path.
+        Return ITS for given id or path.
 
-        id: randomly assigned hex number (from JSON file)
-        name: human readable class name
+        id: randomly assigned hex number (from JSON data)
         path: points to any node in the tree, starts with /
         """
-        try:  # assume id or name
+        try:  # assume id
             return self.types[key]
         except KeyError:
             # try to interpet key as path
