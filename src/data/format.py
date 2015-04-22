@@ -20,24 +20,37 @@ class FormatSpec:
     def __init__(self, data):
         """Initialize the class by parsing ITS from JSON data."""
         self.types = {}
+        self.named_types = {}
         self.root_id = data[0]['id']      # set root type
         for item in data:
             its = InputTypeSpecification(item)
             self.types[its.id] = its  # register by id
+            try:  # register by type_name
+                type_name = its.type_name
+            except KeyError:
+                pass  # not specified type_name -> skip
+            else:
+                self.named_types[type_name] = its
+
 
     def get_its(self, key):
         """
-        Return ITS for given id or path.
+        Return ITS for given id, type_name or path.
 
         id: randomly assigned hex number (from JSON data)
         path: points to any node in the tree, starts with /
         """
+        if key is None:
+            key = self.root_id  # use root if no key is specified
         try:  # assume id
             return self.types[key]
         except KeyError:
-            # try to interpet key as path
-            # TODO implement
-            return None
+            try:  # assume type_name
+                return self.named_types[key]
+            except KeyError:
+                # try to interpet key as path
+                # TODO implement
+                return None
 
 
 
@@ -81,9 +94,18 @@ class InputTypeSpec:
         self.type_full_name = data['type_full_name']
         self.keys = KeySet(data['keys'])
 
+        try:  # optional
+            self.implements = data['implements']
+        except KeyError:
+            pass
+
     def _parse_abstractrecord(self, data):
-        self.default_descendant = data['default_descendant']
         self.implementations = data['implementations']
+
+        try:  # optional
+            self.default_descendant = data['default_descendant']
+        except KeyError:
+            pass
 
 
 class KeySet:

@@ -186,8 +186,6 @@ class TestInputTypeSpec(unittest.TestCase):
         data = {
             "id" : "89b3f44e8ecaec1b",
             "input_type" : "AbstractRecord",
-            "name" : "DarcyFlowMH",
-            "full_name" : "DarcyFlowMH",
             "default_descendant": "59d2b27373f5effe",
             "implementations" : ["59d2b27373f5effe"]
         }
@@ -195,8 +193,6 @@ class TestInputTypeSpec(unittest.TestCase):
 
         self.assertEqual(its.id, "89b3f44e8ecaec1b")
         self.assertEqual(its.input_type, "AbstractRecord")
-        self.assertEqual(its.name, "DarcyFlowMH")
-        self.assertEqual(its.full_name, "DarcyFlowMH")
         self.assertEqual(its.default_descendant, '59d2b27373f5effe')
         self.assertEqual(its.implementations, ["59d2b27373f5effe"])
 
@@ -212,7 +208,6 @@ class TestKeySet(unittest.TestCase):
                 "description" : "METIS description"
             }]
         self.values = KeySet(data, key_label='name')
-
 
     def test_dot_notation(self):
         self.assertEqual(self.values.PETSc.description, "PETSc description")
