@@ -11,29 +11,143 @@ from geomopcontext.data.format import *
 
 class TestFormatSpec(unittest.TestCase):
 
+    def test_root(self):
+        data = [
+          {
+            "id": "cde734cca8c6d536",
+            "input_type": "Bool",
+          },
+          {
+            "id": "282546d52edd4",
+            "input_type": "Bool"
+          }
+        ]
+        format = FormatSpec(data)
+
+        self.assertEqual(format.root_id, 'cde734cca8c6d536')
+
+    def test_get_its(self):
+        data = [
+          {
+            "id": "cde734cca8c6d536",
+            "input_type": "Record",
+            "type_name": "Root",
+            "keys": [
+              {
+                "key": "problem",
+                "type": "1b71c90f49db780"
+              },
+              {
+                "key": "pause_after_run",
+                "type": "282546d52edd4"
+              }
+            ]
+          },
+          {
+            "id": "282546d52edd4",
+            "input_type": "Bool"
+          },
+          {
+            "id": "1b71c90f49db780",
+            "input_type": "String"
+          }
+        ]
+        format = FormatSpec(data)
+
+        self.assertEqual(format.get_its('282546d52edd4').input_type, 'Bool')
+        self.assertEqual(format.get_its('Root').id, 'cde734cca8c6d536')
+        #format = self.assertEqual(format.get_its('/problem').id, '282546d52edd4')
+
+
     def setUp(self):
         data = [
-            {
-            "id" : "cde734cca8c6d536",
-            "input_type" : "Record",
-            "type_name" : "Root",
-            "type_full_name" : "Root",
-
-            "description" : "Root record of JSON input for Flow123d.",
-            "keys" : [
-            { "key" : "problem",
-            "description" : "Simulation problem to be solved.",
-            "default" : { "type" : "obligatory",
-            "value" : "OBLIGATORY" },
-            "type" : "1b71c90f49db780"
-            },
-            { "key" : "pause_after_run",
-            "description" : "If true, the program will wait for key press before it terminates.",
-            "default" : { "type" : "value at declaration",
-            "value" : "false" },
-            "type" : "282546d52edd4"
-            }]
-        }]
+          {
+            "id": "cde734cca8c6d536",
+            "input_type": "Record",
+            "type_name": "Root",
+            "keys": [
+              {
+                "key": "problem",
+                "type": "1b71c90f49db780"
+              },
+              {
+                "key": "pause_after_run",
+                "type": "282546d52edd4"
+              }
+            ]
+          },
+          {
+            "id": "1b71c90f49db780",
+            "input_type": "AbstractRecord",
+            "implementations": [
+              "db7e4989ec9be7da"
+            ]
+          },
+          {
+            "id": "db7e4989ec9be7da",
+            "input_type": "Record",
+            "type_name": "SequentialCoupling",
+            "implements": [
+              "Problem"
+            ],
+            "keys": [
+              {
+                "key": "TYPE",
+                "description": "Sub-record selection.",
+                "default": {
+                  "type": "value at declaration",
+                  "value": "SequentialCoupling"
+                },
+                "type": "b0bf265898e2625b"
+              },
+              {
+                "key": "description",
+                "description": "Short description of the solved problem.\nIs displayed in the main log, and possibly in other text output files.",
+                "default": {
+                  "type": "optional",
+                  "value": "OPTIONAL"
+                },
+                "type": "29b5533100b6f60f"
+              },
+              {
+                "key": "mesh",
+                "description": "Computational mesh common to all equations.",
+                "default": {
+                  "type": "obligatory",
+                  "value": "OBLIGATORY"
+                },
+                "type": "c57e1ac33a446313"
+              },
+              {
+                "key": "time",
+                "description": "Simulation time frame and time step.",
+                "default": {
+                  "type": "optional",
+                  "value": "OPTIONAL"
+                },
+                "type": "d8574f6af69c7e1f"
+              },
+              {
+                "key": "primary_equation",
+                "description": "Primary equation, have all data given.",
+                "default": {
+                  "type": "obligatory",
+                  "value": "OBLIGATORY"
+                },
+                "type": "89b3f44e8ecaec1b"
+              },
+              {
+                "key": "secondary_equation",
+                "description": "The equation that depends (the velocity field) on the result of the primary equation.",
+                "default": {
+                  "type": "optional",
+                  "value": "OPTIONAL"
+                },
+                "type": "ba303ab22ac2d682"
+              }
+            ]
+          }
+        ]
 
 
 class TestInputTypeSpec(unittest.TestCase):
@@ -54,11 +168,11 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_optional_params(self):
         data = {
-            "id" : "151ce92dd201d44b",
-            "input_type" : "",
-            "name" : "Integer",
-            "full_name" : "Integer",
-            "description": "description"
+          "id": "151ce92dd201d44b",
+          "input_type": "",
+          "name": "Integer",
+          "full_name": "Integer",
+          "description": "description"
         }
         its = InputTypeSpec(data)
 
@@ -70,10 +184,13 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_integer(self):
         data = {
-                "id" : "151ce92dd201d44b",
-                "input_type" : "Integer",
-                "range" : [0, 3]
-                }
+          "id": "151ce92dd201d44b",
+          "input_type": "Integer",
+          "range": [
+            0,
+            3
+          ]
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "151ce92dd201d44b")
@@ -83,10 +200,13 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_double(self):
         data = {
-                "id" : "6b1c4ede475775aa",
-                "input_type" : "Double",
-                "range" : [0, 1.79769e+308],
-                }
+          "id": "6b1c4ede475775aa",
+          "input_type": "Double",
+          "range": [
+            0,
+            1.79769E+308
+          ]
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "6b1c4ede475775aa")
@@ -96,9 +216,9 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_bool(self):
         data = {
-                "id" : "282546d52edd4",
-                "input_type" : "Bool"
-                }
+          "id": "282546d52edd4",
+          "input_type": "Bool"
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "282546d52edd4")
@@ -106,9 +226,9 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_string(self):
         data = {
-                "id" : "29b5533100b6f60f",
-                "input_type" : "String"
-                }
+          "id": "29b5533100b6f60f",
+          "input_type": "String"
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "29b5533100b6f60f")
@@ -116,10 +236,10 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_filename(self):
         data = {
-                "id" : "89a808b8e9515bf8",
-                "input_type" : "FileName",
-                "file_mode" : "input"
-                }
+          "id": "89a808b8e9515bf8",
+          "input_type": "FileName",
+          "file_mode": "input"
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "89a808b8e9515bf8")
@@ -128,15 +248,19 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_selection(self):
         data = {
-                "id" : "f9756fb2f66076a1",
-                "input_type" : "Selection",
-                "values" : [{
-                    "name" : "PETSc",
-                    "description" : "PETSc description"
-                    },{
-                    "name" : "METIS",
-                    "description" : "METIS description" }]
-                }
+          "id": "f9756fb2f66076a1",
+          "input_type": "Selection",
+          "values": [
+            {
+              "name": "PETSc",
+              "description": "PETSc description"
+            },
+            {
+              "name": "METIS",
+              "description": "METIS description"
+            }
+          ]
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "f9756fb2f66076a1")
@@ -146,11 +270,14 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_array(self):
         data = {
-                "id" : "eee3033466b9ffa2",
-                "input_type" : "Array",
-                "range" : [0, 4294967295],
-                "subtype" : "6b1c4ede475775aa",
-                }
+          "id": "eee3033466b9ffa2",
+          "input_type": "Array",
+          "range": [
+            0,
+            4294967295
+          ],
+          "subtype": "6b1c4ede475775aa"
+        }
         its = InputTypeSpec(data)
 
         self.assertEqual(its.id, "eee3033466b9ffa2")
@@ -161,16 +288,20 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_record(self):
         data = {
-            "id" : "b9614d55a6c3462e",
-            "input_type" : "Record",
-            "type_name" : "Region",
-            "type_full_name" : "Region",
-            "keys" : [
-            { "key" : "name",
-            "default" : { "type" : "obligatory",
-            "value" : "OBLIGATORY" },
-            "type" : "29b5533100b6f60f"
-            }]
+          "id": "b9614d55a6c3462e",
+          "input_type": "Record",
+          "type_name": "Region",
+          "type_full_name": "Region",
+          "keys": [
+            {
+              "key": "name",
+              "default": {
+                "type": "obligatory",
+                "value": "OBLIGATORY"
+              },
+              "type": "29b5533100b6f60f"
+            }
+          ]
         }
         its = InputTypeSpec(data)
 
@@ -184,10 +315,12 @@ class TestInputTypeSpec(unittest.TestCase):
 
     def test_abstract_record(self):
         data = {
-            "id" : "89b3f44e8ecaec1b",
-            "input_type" : "AbstractRecord",
-            "default_descendant": "59d2b27373f5effe",
-            "implementations" : ["59d2b27373f5effe"]
+          "id": "89b3f44e8ecaec1b",
+          "input_type": "AbstractRecord",
+          "default_descendant": "59d2b27373f5effe",
+          "implementations": [
+            "59d2b27373f5effe"
+          ]
         }
         its = InputTypeSpec(data)
 
@@ -200,13 +333,16 @@ class TestInputTypeSpec(unittest.TestCase):
 class TestKeySet(unittest.TestCase):
     
     def setUp(self):
-        data = [{
-                "name" : "PETSc",
-                "description" : "PETSc description"
-            },{
-                "name" : "METIS",
-                "description" : "METIS description"
-            }]
+        data = [
+          {
+            "name": "PETSc",
+            "description": "PETSc description"
+          },
+          {
+            "name": "METIS",
+            "description": "METIS description"
+          }
+        ]
         self.values = KeySet(data, key_label='name')
 
     def test_dot_notation(self):
@@ -231,23 +367,23 @@ class TestObjectView(unittest.TestCase):
     
     def test_dot_notation(self):
         data = {
-            'computer1': {
-                'name': 'sharp-pc',
-                'equipment': {
-                    'mouse': 'Logitech G500'
-                },
-                'components': {
-                    'cpu': {
-                        'brand': 'Intel',
-                        'name': 'Intel i5',
-                        'freq': '3.2 Ghz'
-                    },
-                    'gpu': 'ATI Radeon 880M'
-                }
+          "computer1": {
+            "name": "sharp-pc",
+            "equipment": {
+              "mouse": "Logitech G500"
             },
-            'computer2': {
-                'name': 'old-pc'
+            "components": {
+              "cpu": {
+                "brand": "Intel",
+                "name": "Intel i5",
+                "freq": "3.2 Ghz"
+              },
+              "gpu": "ATI Radeon 880M"
             }
+          },
+          "computer2": {
+            "name": "old-pc"
+          }
         }
         computers = ObjectView(data)
         self.assertEqual(computers.computer1.name, 'sharp-pc')

@@ -23,17 +23,17 @@ class FormatSpec:
         self.named_types = {}
         self.root_id = data[0]['id']      # set root type
         for item in data:
-            its = InputTypeSpecification(item)
+            its = InputTypeSpec(item)
             self.types[its.id] = its  # register by id
             try:  # register by type_name
                 type_name = its.type_name
-            except KeyError:
+            except AttributeError:
                 pass  # not specified type_name -> skip
             else:
                 self.named_types[type_name] = its
 
 
-    def get_its(self, key):
+    def get_its(self, key=None):
         """
         Return ITS for given id, type_name or path.
 
@@ -91,8 +91,12 @@ class InputTypeSpec:
 
     def _parse_record(self, data):
         self.type_name = data['type_name']
-        self.type_full_name = data['type_full_name']
         self.keys = KeySet(data['keys'])
+
+        try:  # optional
+            self.type_full_name = data['type_full_name']
+        except KeyError:
+            pass
 
         try:  # optional
             self.implements = data['implements']
