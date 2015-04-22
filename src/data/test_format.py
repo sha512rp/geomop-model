@@ -180,8 +180,46 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.max, 4294967295)
         self.assertEqual(its.subtype, "6b1c4ede475775aa")
 
+    def test_record(self):
+            data = {
+                "id" : "b9614d55a6c3462e",
+                "input_type" : "Record",
+                "type_name" : "Region",
+                "type_full_name" : "Region",
+                "description" : "Definition of region of elements.",
+                "keys" : [
+                { "key" : "name",
+                "description" : "Label (name) of the region.",
+                "default" : { "type" : "obligatory",
+                "value" : "OBLIGATORY" },
+                "type" : "29b5533100b6f60f"
+                },
+                { "key" : "id",
+                "description" : "The ID of the region",
+                "default" : { "type" : "obligatory",
+                "value" : "OBLIGATORY" },
+                "type" : "151ce92d5201d44f"
+                },
+                { "key" : "element_list",
+                "description" : "list of elements",
+                "default" : { "type" : "optional",
+                "value" : "OPTIONAL" },
+                "type" : "ccc88a2172d23cc3"
+                }]
+            }
+            its = InputTypeSpec(data)
 
-class TestSelectionValues(unittest.TestCase):
+            self.assertEqual(its.id, "b9614d55a6c3462e")
+            self.assertEqual(its.input_type, "Record")
+            # self.assertEqual(its.type_name, "Region")
+            # self.assertEqual(its.type_full_name, "Region")
+            self.assertEqual(its.description, "Definition of region of elements.")
+            # self.assertEqual(its.keys.name, 0)
+            # self.assertEqual(its.max, 4294967295)
+            # self.assertEqual(its.subtype, "6b1c4ede475775aa")
+
+
+class TestKeySet(unittest.TestCase):
     
     def setUp(self):
         data = [{
@@ -191,7 +229,7 @@ class TestSelectionValues(unittest.TestCase):
                 "name" : "METIS",
                 "description" : "METIS description"
             }]
-        self.values = SelectionValues(data)
+        self.values = KeySet(data)
 
 
     def test_dot_notation(self):

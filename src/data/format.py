@@ -66,7 +66,7 @@ class InputTypeSpec:
         self.max = data['range'][1]
 
     def _parse_selection(self, data):
-        self.values = SelectionValues(data['values'])
+        self.values = KeySet(data['values'])
 
     def _parse_filename(self, data):
         self.file_mode = data['file_mode']
@@ -77,16 +77,20 @@ class InputTypeSpec:
         self.subtype = data['subtype']
 
 
-class SelectionValues:
+class KeySet:
     """
-        Stores selection values.
+        KeySet is constructed from dict.
 
-        Supports iteration, length and access through dot notation.
+        Supports:
+          - dot notation: returns value for keyset.key.subkey
+          - iteration: returns values of all possible keys (top level)
+          - length: returns number of keys (top level)
+          - contains: key in keyset
     """
 
     def __init__(self, data):
         for item in data:
-            value = ObjectView(copy.deepcopy(item))
+            value = ObjectView(item)
             self.__dict__[value.name] = value
 
     def __len__(self):
