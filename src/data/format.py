@@ -76,22 +76,34 @@ class InputTypeSpec:
         self.id = data['id']
         self.input_type = data['input_type']
         for param in InputTypeSpec.OPTIONAL_PARAMS:       # parse optional parameters
-            try:
-                setattr(self, param, data[param])
-            except KeyError:
-                pass
+            self.__parse_optional(data, param)
         try:        # parse extra parameters based on input_type
             getattr(self, '_parse_%s' % self.input_type.lower())(data)
         except AttributeError:
             self.kwargs = {}
 
+    def __parse_range(self, data, default=[float('-inf'), float('inf')]):
+        try:
+            self.min = data['range'][0]
+        except KeyError:
+            self.min = default[0]
+
+        try:
+            self.max = data['range'][1]
+        except KeyError:
+            self.max = default[1]
+
+    def __parse_optional(self, data, key):
+        try:
+            setattr(self, key, data[key])
+        except KeyError:
+            pass
+
     def _parse_integer(self, data):
-        self.min = data['range'][0]
-        self.max = data['range'][1]
+        self.__parse_range(data)
 
     def _parse_double(self, data):
-        self.min = data['range'][0]
-        self.max = data['range'][1]
+        self.__parse_range(data)
 
     def _parse_selection(self, data):
         self.values = KeySet(data['values'], key_label='name')
@@ -100,31 +112,20 @@ class InputTypeSpec:
         self.file_mode = data['file_mode']
 
     def _parse_array(self, data):
-        self.min = data['range'][0]
-        self.max = data['range'][1]
+        self.__parse_range(data, default=[0, float('inf')])
         self.subtype = data['subtype']
 
     def _parse_record(self, data):
         self.type_name = data['type_name']
         self.keys = KeySet(data['keys'])
-
-        try:  # optional
-            self.type_full_name = data['type_full_name']
-        except KeyError:
-            pass
-
-        try:  # optional
-            self.implements = data['implements']
-        except KeyError:
-            pass
+        
+        for key in ['type_full_name', 'implements']:
+            self.__parse_optional(data, key)
 
     def _parse_abstractrecord(self, data):
         self.implementations = data['implementations']
 
-        try:  # optional
-            self.default_descendant = data['default_descendant']
-        except KeyError:
-            pass
+        self.__parse_optional(data, 'default_descendant')
 
 
 class KeySet:
