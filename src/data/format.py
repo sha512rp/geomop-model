@@ -69,8 +69,6 @@ class FormatSpec:
     #     return its
 
 
-
-
 class InputTypeSpec:
     OPTIONAL_PARAMS = ['name', 'full_name', 'description']
 
