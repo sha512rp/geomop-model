@@ -48,9 +48,26 @@ class FormatSpec:
             try:  # assume type_name
                 return self.named_types[key]
             except KeyError:
-                # try to interpet key as path
-                # TODO implement
                 return None
+
+    # TODO delete or solve AbstractRecord path problem
+    # def _get_its_by_path(self, path):
+    #     if (path.startswith('/')):
+    #         its = self.types[self.root_id]
+    #         path = path[1:]
+    #     else:
+    #         return None
+
+    #     for key in path.split('/'):
+    #         try:
+    #             int(key)  # test for numeric
+    #         except ValueError:  # is record key
+    #             type_id = getattr(its.keys, key).type
+    #             its = self.types[type_id]
+    #         else:  # is numeric -> array
+    #             its = self.types[its.subtype]
+    #     return its
+
 
 
 

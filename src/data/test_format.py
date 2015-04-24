@@ -34,120 +34,40 @@ class TestFormatSpec(unittest.TestCase):
             "type_name": "Root",
             "keys": [
               {
-                "key": "problem",
-                "type": "1b71c90f49db780"
+                "key": "bools",
+                "type": "5985ba73963f9447"
               },
               {
-                "key": "pause_after_run",
-                "type": "282546d52edd4"
+                "key": "recursion",
+                "type": "cde734cca8c6d536"
               }
             ]
           },
           {
-            "id": "282546d52edd4",
-            "input_type": "Bool"
+            "id": "5985ba73963f9447",
+            "input_type": "Array",
+            "range": [
+              0,
+              5
+            ],
+            "subtype": "282546d52edd4"
           },
           {
-            "id": "1b71c90f49db780",
-            "input_type": "String"
+            "id": "282546d52edd4",
+            "input_type": "Bool"
           }
         ]
         format = FormatSpec(data)
 
         self.assertEqual(format.get_its('282546d52edd4').input_type, 'Bool')
-        self.assertEqual(format.get_its('Root').id, 'cde734cca8c6d536')
-        #format = self.assertEqual(format.get_its('/problem').id, '282546d52edd4')
+        self.assertEqual(format.get_its('Root').keys.recursion.type,
+            'cde734cca8c6d536')
 
-
-    def setUp(self):
-        data = [
-          {
-            "id": "cde734cca8c6d536",
-            "input_type": "Record",
-            "type_name": "Root",
-            "keys": [
-              {
-                "key": "problem",
-                "type": "1b71c90f49db780"
-              },
-              {
-                "key": "pause_after_run",
-                "type": "282546d52edd4"
-              }
-            ]
-          },
-          {
-            "id": "1b71c90f49db780",
-            "input_type": "AbstractRecord",
-            "implementations": [
-              "db7e4989ec9be7da"
-            ]
-          },
-          {
-            "id": "db7e4989ec9be7da",
-            "input_type": "Record",
-            "type_name": "SequentialCoupling",
-            "implements": [
-              "Problem"
-            ],
-            "keys": [
-              {
-                "key": "TYPE",
-                "description": "Sub-record selection.",
-                "default": {
-                  "type": "value at declaration",
-                  "value": "SequentialCoupling"
-                },
-                "type": "b0bf265898e2625b"
-              },
-              {
-                "key": "description",
-                "description": "Short description of the solved problem.\nIs displayed in the main log, and possibly in other text output files.",
-                "default": {
-                  "type": "optional",
-                  "value": "OPTIONAL"
-                },
-                "type": "29b5533100b6f60f"
-              },
-              {
-                "key": "mesh",
-                "description": "Computational mesh common to all equations.",
-                "default": {
-                  "type": "obligatory",
-                  "value": "OBLIGATORY"
-                },
-                "type": "c57e1ac33a446313"
-              },
-              {
-                "key": "time",
-                "description": "Simulation time frame and time step.",
-                "default": {
-                  "type": "optional",
-                  "value": "OPTIONAL"
-                },
-                "type": "d8574f6af69c7e1f"
-              },
-              {
-                "key": "primary_equation",
-                "description": "Primary equation, have all data given.",
-                "default": {
-                  "type": "obligatory",
-                  "value": "OBLIGATORY"
-                },
-                "type": "89b3f44e8ecaec1b"
-              },
-              {
-                "key": "secondary_equation",
-                "description": "The equation that depends (the velocity field) on the result of the primary equation.",
-                "default": {
-                  "type": "optional",
-                  "value": "OPTIONAL"
-                },
-                "type": "ba303ab22ac2d682"
-              }
-            ]
-          }
-        ]
+        # path -- problem: AbstractRecord
+        # self.assertEqual(format.get_its('/bools').input_type, 'Array')
+        # self.assertEqual(format.get_its('/bools/43').input_type, 'Bool')
+        # self.assertEqual(format.get_its('/recursion/recursion/bools').max, 5)
+        # self.assertIsNone(format.get_its('bools'))  # non-existent path
 
 
 class TestInputTypeSpec(unittest.TestCase):
