@@ -29,6 +29,18 @@ class TestConData(unittest.TestCase):
 
         self.assertEqual(len(data), 2)
 
+        for key, value in data:  # test __iter__
+            if key == 'one':
+                self.assertEqual(value._value, True)
+            elif key == 'two':
+                self.assertEqual(value._value, 42)
+            else:
+                raise AttributeError
+
+        # test __contains__
+        self.assertIn('one', data)
+        self.assertIn('two', data)
+
         with self.assertRaises(AttributeError):
             data.three
 

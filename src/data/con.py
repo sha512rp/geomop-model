@@ -57,6 +57,16 @@ class ConData:
     def __getitem__(self, index):
         return self._ref._value[index]
 
+    def __len__(self):
+        return len(self._ref._value)
+
+    def __iter__(self):
+        for key, value in self._ref._value.items():
+            yield key, value
+
+    def __contains__(self, key):
+        return key in self._ref._value.keys()
+
 
 def parse_format(filename):
     return demjson.decode_file(filename)
