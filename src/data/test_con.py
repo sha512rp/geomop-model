@@ -13,12 +13,12 @@ from geomopcontext.data.con import *
 
 class TestConData(unittest.TestCase):
 
-    def test_con_value(self):
+    def test_value(self):
         raw = 3
         data = ConData(raw)
         self.assertEqual(data._value, 3)
 
-    def test_con_record(self):
+    def test_record(self):
         raw = {
             'one': True,
             'two': 42
@@ -27,10 +27,12 @@ class TestConData(unittest.TestCase):
         self.assertEqual(data.one._value, True)
         self.assertEqual(data.two._value, 42)
 
+        self.assertEqual(len(data), 2)
+
         with self.assertRaises(AttributeError):
             data.three
 
-    def test_con_array(self):
+    def test_array(self):
         raw = [
             34,
             55,
@@ -43,6 +45,8 @@ class TestConData(unittest.TestCase):
         self.assertEqual(data[2]._value, 66)
         self.assertEqual(data[3]._value, 4)
 
+        self.assertEqual(len(data), 4)
+
         for item in data._value[2:]:
             item._value = 99
         self.assertEqual(data[2]._value, 99)
@@ -50,6 +54,30 @@ class TestConData(unittest.TestCase):
 
         data._value.append(ConData(33))
         self.assertEqual(data[4]._value, 33)
+
+    def test_complex(self):
+        raw = {
+            'problem': {
+                'one': 1,
+                'two': True,
+                'three': [
+                    {
+                    'a': 2
+                    },
+                    {
+                    'a': 3
+                    }
+                ]
+            },
+            'data': [True, False]
+        }
+        data = ConData(raw)
+        self.assertEqual(data.problem.one._value, 1)
+        self.assertEqual(data.problem.two._value, True)
+        self.assertEqual(data.problem.three[0].a._value, 2)
+        self.assertEqual(data.problem.three[1].a._value, 3)
+        self.assertEqual(data.data[0]._value, True)
+        self.assertEqual(data.data[1]._value, False)
 
     # def test_ref(self):
     #     data = {
