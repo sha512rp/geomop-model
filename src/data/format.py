@@ -32,13 +32,11 @@ class FormatSpec:
             else:
                 self.named_types[type_name] = its
 
-
-    def get_its(self, key=None):
+    def its(self, key=None):
         """
-        Return ITS for given id, type_name or path.
+        Return ITS for given id or type_name.
 
-        id: randomly assigned hex number (from JSON data)
-        path: points to any node in the tree, starts with /
+        If key is not specified, returns root ITS.
         """
         if key is None:
             key = self.root_id  # use root if no key is specified
@@ -50,24 +48,6 @@ class FormatSpec:
             except KeyError:
                 return None
 
-    # TODO delete or solve AbstractRecord path problem
-    # def _get_its_by_path(self, path):
-    #     if (path.startswith('/')):
-    #         its = self.types[self.root_id]
-    #         path = path[1:]
-    #     else:
-    #         return None
-
-    #     for key in path.split('/'):
-    #         try:
-    #             int(key)  # test for numeric
-    #         except ValueError:  # is record key
-    #             type_id = getattr(its.keys, key).type
-    #             its = self.types[type_id]
-    #         else:  # is numeric -> array
-    #             its = self.types[its.subtype]
-    #     return its
-
 
 class InputTypeSpec:
     OPTIONAL_PARAMS = ['name', 'full_name', 'description']
@@ -75,12 +55,12 @@ class InputTypeSpec:
     def __init__(self, data):
         self.id = data['id']
         self.input_type = data['input_type']
-        for param in InputTypeSpec.OPTIONAL_PARAMS:       # parse optional parameters
+        for param in InputTypeSpec.OPTIONAL_PARAMS:
             self.__parse_optional(data, param)
         try:        # parse extra parameters based on input_type
             getattr(self, '_parse_%s' % self.input_type.lower())(data)
         except AttributeError:
-            self.kwargs = {}
+            pass
 
     def __parse_range(self, data, default=[float('-inf'), float('inf')]):
         try:
@@ -118,7 +98,7 @@ class InputTypeSpec:
     def _parse_record(self, data):
         self.type_name = data['type_name']
         self.keys = KeySet(data['keys'])
-        
+
         for key in ['type_full_name', 'implements']:
             self.__parse_optional(data, key)
 

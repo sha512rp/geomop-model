@@ -26,7 +26,7 @@ class TestFormatSpec(unittest.TestCase):
 
         self.assertEqual(format.root_id, 'cde734cca8c6d536')
 
-    def test_get_its(self):
+    def test_its(self):
         data = [
           {
             "id": "cde734cca8c6d536",
@@ -59,8 +59,8 @@ class TestFormatSpec(unittest.TestCase):
         ]
         format = FormatSpec(data)
 
-        self.assertEqual(format.get_its('282546d52edd4').input_type, 'Bool')
-        self.assertEqual(format.get_its('Root').keys.recursion.type,
+        self.assertEqual(format.its('282546d52edd4').input_type, 'Bool')
+        self.assertEqual(format.its('Root').keys.recursion.type,
             'cde734cca8c6d536')
 
         # path -- problem: AbstractRecord
