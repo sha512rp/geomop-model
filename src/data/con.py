@@ -48,11 +48,25 @@ class ConData:
         else:
             self._value = data
         
-    def __getattr__(self, name):
-        if name not in self._ref._value.keys():
-            raise AttributeError
+    def __setattr__(self, name, value):
+        if name == '_ref':
+            try:  # important to delete _value for reference to work
+                del self._value
+            except AttributeError:
+                pass
+            object.__setattr__(self, name, value)
+        else:
+            object.__setattr__(self._ref, name, value)
 
-        return self._ref._value[name]
+    def __getattr__(self, name):
+        if name in self._ref.__dict__.keys():
+            return self._ref.__dict__[name]
+        elif name in self._ref._value.keys():
+            return self._ref._value[name]
+        else:
+            raise AttributeError
+        #TODO works, isn't it too complicated?
+        
 
     def __getitem__(self, index):
         return self._ref._value[index]

@@ -91,18 +91,36 @@ class TestConData(unittest.TestCase):
         self.assertEqual(data.data[0]._value, True)
         self.assertEqual(data.data[1]._value, False)
 
-    # def test_ref(self):
-    #     data = {
-    #         'bools': [True, False],
-    #         'bools2': {
-    #             'REF': '/bools'
-    #         }
-    #     }
-    #     root = ConData(data, self.format)
-    #     root.bools = ConData([True, False])
-    #     root.bools[0].value = False
-    #     root.bools2[1].value = True
-    # TODO test ref and setting _value!
-    #     self.assertEqual(root.bools2._ref, root.bools)
-    #     self.assertEqual(root.bools2[0].value, False)
-    #     self.assertEqual(root.bools[1].value, True)
+    def test_ref(self):
+        raw = {
+            'problem': {
+                'one': 1,
+                'two': True,
+                'three': [
+                    {
+                    'a': 2
+                    },
+                    {
+                    'a': 3
+                    }
+                ]
+            },
+            'data': [True, False],
+            'problem2': None
+        }
+        data = ConData(raw)
+        data.problem2._ref = data.problem  # set reference
+
+        self.assertEqual(data.problem.two._value, True)
+        data.problem2.two._value = False  # change reference
+        self.assertEqual(data.problem.two._value, False)
+        self.assertEqual(data.problem2.two._value, False)
+
+        self.assertEqual(data.problem2.one._value, 1)
+        data.problem.one._value = 5  # change original
+        self.assertEqual(data.problem2.one._value, 5)
+        self.assertEqual(data.problem.one._value, 5)
+
+        data.problem2._value = {}
+        self.assertEqual(len(data.problem._value), 0)
+        self.assertEqual(len(data.problem2._value), 0)
