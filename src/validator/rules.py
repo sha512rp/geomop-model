@@ -8,67 +8,89 @@ Basic rules for data validation
 from geomopcontext.validator.errors import *
 
 
-def check_integer(val, its):
-    if not isinstance(val, int):
+def check_integer(value, its):
+    if not isinstance(value, int):
         raise ValidationTypeError("Expecting type Integer")
 
-    if (val < its.min):
+    if (value < its.min):
         raise ValueTooSmall(its.min)
 
-    if (val > its.max):
+    if (value > its.max):
         raise ValueTooBig(its.max)
 
     return True
 
 
-def check_double(val, its):
-    if not isinstance(val, (int, float)):
+def check_double(value, its):
+    if not isinstance(value, (int, float)):
         raise ValidationTypeError("Expecting type Double")
 
-    if (val < its.min):
+    if (value < its.min):
         raise ValueTooSmall(its.min)
 
-    if (val > its.max):
+    if (value > its.max):
         raise ValueTooBig(its.max)
 
     return True
 
 
-def check_bool(val, its):
-    if not isinstance(val, bool):
+def check_bool(value, its):
+    if not isinstance(value, bool):
         raise ValidationTypeError("Expecting type Bool")
 
     return True
 
 
-def check_string(val, its):
-    if not isinstance(val, str):
+def check_string(value, its):
+    if not isinstance(value, str):
         raise ValidationTypeError("Expecting type String")
 
     return True
 
 
-def check_selection(val, its):
-    if (val in its.values.keys()):
+def check_selection(value, its):
+    if (value in its.values.keys()):
         return True
     else:
-        raise InvalidOption(val, its.name)
+        raise InvalidOption(value, its.name)
 
 
-def check_filename(val, its):
+def check_filename(value, its):
     """
     Placeholder for FileName validation.
     """
-    return check_string(val, its)
+    return check_string(value, its)
 
 
-def check_array(val, its):
-    if not isinstance(val, (list, str)):
+def check_array(value, its):
+    if not isinstance(value, (list, str)):
         raise ValidationTypeError("Expecting type Array")
 
-    if len(val) < its.min:
+    if len(value) < its.min:
         raise NotEnoughItems(its.min)
-    elif len(val) > its.max:
+    elif len(value) > its.max:
         raise TooManyItems(its.max)
 
     return True
+
+
+def check_record_key(record, key, its):
+    if not isinstance(record, dict):
+        raise ValidationTypeError("Expecting type Record")
+
+    if key not in its.keys.keys():
+        raise UnknownKey(key, its.name)
+
+    try:
+        key_type = its.keys[key]['default']['type']
+    except KeyError:
+        pass  # if default or type isn't specified, skip
+    else:
+        if key_type == 'obligatory':
+            try:
+                record[key]
+            except KeyError:
+                raise MissingKey(key, its.name)
+
+    return True
+

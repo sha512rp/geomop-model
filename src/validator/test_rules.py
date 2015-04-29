@@ -126,6 +126,35 @@ class TestBasicRules(unittest.TestCase):
         with self.assertRaises(TooManyItems):
             rules.check_array([1, 2, 3, 4, 5, 6], its);
 
+    def test_check_record_key(self):
+        keys = {
+            'a1': {'default': {'type': 'obligatory'}},
+            'a2': {'default': {'type': 'obligatory'}},
+            'b': {'default': {'type': 'value at declaration'}},
+            'c': {'default': {'type': 'value at read time'}},
+            'd': {'default': {'type': 'optional'}}
+        }
+        its = Mock(keys=keys)
+        its.name = 'MyRecord'
+
+        self.assertEquals(rules.check_record_key({'a1': 1}, 'a1', its), True)
+        self.assertEquals(rules.check_record_key({'a1': 1}, 'b', its), True)
+        self.assertEquals(rules.check_record_key({'a1': 1}, 'c', its), True)
+        self.assertEquals(rules.check_record_key({'a1': 1}, 'd', its), True)
+
+        with self.assertRaises(MissingKey):
+            rules.check_record_key({'a1': 1}, 'a2', its)
+
+        with self.assertRaises(UnknownKey):
+            rules.check_record_key({'unknown': 1}, 'unknown', its)
+
+        with self.assertRaises(ValidationTypeError):
+            rules.check_record_key([], 'a', its);
+
+
+    def test_check_abstractrecord(self):
+        raise NotImplementedError
+
 
 class TestRuleParser(unittest.TestCase):
     pass
