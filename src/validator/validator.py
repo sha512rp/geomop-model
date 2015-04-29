@@ -9,60 +9,46 @@ from enum import Enum
 
 from geomopcontext.validator.errors import *
 import geomopcontext.validator.rules as rules
-from geomopcontext.validator.rules import Rule
 
-class Validator:
 
-    SCALARS = ['Integer', 'Double', 'Bool', 'String', 'Selection',
+SCALARS = ['Integer', 'Double', 'Bool', 'String', 'Selection',
                     'FileName']
 
-    def __init__(self, json_rules):
-        self.rules = {}
-        self.root_id = json_rules[0]['id']      # set root validation rule
-        for rule in json_rules:
-            self.rules[rule['id']] = Rule(rule)
 
-    def validate(self, data):
-        """
-        Performs data validation from the root rule.
+def validate(node, format):
+    """
+    Performs data validation from the root rule.
 
-        Returns True if valid, list of errors otherwise.
-        """
-        self.result = ValidationResult()
-        if not self.rules:
-            self.result.report({'severity': Severity.warn,
-                'message': "No rules were specified"})
-        self._validate(data, self.root_id)
-        return self.result
+    Returns True if valid, list of errors otherwise.
+    """
+    pass
 
-    def _validate(self, data, rule_id):
-        rule = self.rules[rule_id]
-        if rule.input_type in Validator.SCALARS:
-            self._validate_scalar(data, rule)
-        elif rule.input_type == 'Array':
-            self._validate_array(data, rule)
-        elif rule.input_type == 'Record':
-            self._validate_record(data, rule)
-        elif rule.input_type == 'AbstractRecord':
-            self._validate_abstract_record(data, rule)
-        else:
-            self.result.report({'severity': Severity.warn, 'message': 
-                "Unknown rule input_type: " + rule.input_type})
 
-    def _validate_scalar(self, data, rule):
-        try:
-            getattr(rules, 'check_%s' % rule.input_type.lower())(data,
-                **rule.kwargs)
-        except ValidationError as e:
-            self.result.report({'severity': Severity.error,\
-                                'message': str(e),\
-                                'exception': e})
-            # TODO position of exception
+def validate_node(node):
+    try:
+        return getattr(rules,
+            'check_%s' % node.its.input_type.lower())(node.value, node.its)
+    except ValidationError as e:
+        raise ValidationError(node.path + ': ' + str(e))
 
-    def _validate_array(self, data, rule):
-        self._validate_scalar(data, rule)  # validate array dimension
-        for item in data:
-            self._validate(item, rule.subtype)
+
+def _validate_scalar(data, its):
+    # try:
+    #     getattr(rules, 'check_%s' % its.input_type.lower())(data,
+    #         **rule.kwargs)
+    # except ValidationError as e:
+    #     self.result.report({'severity': Severity.error,\
+    #                         'message': str(e),\
+    #                         'exception': e})
+    #     # TODO position of exception
+    pass
+
+
+def _validate_array(data, rule):
+    pass
+
+
+# def _validate_record(self, data, )
 
 
 class Severity(Enum):
@@ -96,6 +82,6 @@ class ValidationResult:
         """
         out = []
         for message in self.messages:
-            if message['severity'].value >= minimum_severity:
+            if message['severity'].value >= minimum_severity.value:
                 out.append(message)
         return out
