@@ -12,11 +12,21 @@ import pprint
 
 
 class FileHandler:
-    pass
+    def parse(self, filename):
+        """Parse input file, returns ConData."""
+        raise NotImplementedError
 
 
 class ConFileHandler(FileHandler):
-    pass
+    def parse(self, filename):
+        con = open(filename).read()
+        raw = self._decode_con(con)
+        # TODO replace ref
+
+    def _decode_con(self, con):
+        p = re.compile(r"\s?=\s?");  # TODO can I replace = simply like this?
+        con = p.sub(':', con)
+        return demjson.decode(con)
 
 
 class YamlFileHandler(FileHandler):
@@ -35,6 +45,7 @@ class ConData:
     """
 
     def __init__(self, data):
+        # TODO _path
         self._ref = self
         if isinstance(data, dict):
             self._value = {}
@@ -57,6 +68,8 @@ class ConData:
             object.__setattr__(self, name, value)
         else:
             object.__setattr__(self._ref, name, value)
+        # _attr -> __dict__
+        # attr -> _value
 
     def __getattr__(self, name):
         if name in self._ref.__dict__.keys():
@@ -65,8 +78,11 @@ class ConData:
             return self._ref._value[name]
         else:
             raise AttributeError
-        #TODO works, isn't it too complicated?
-        
+        # TODO works, isn't it too complicated?
+        # issues with _ attributes, i.e. _its
+        # _its has to be set before _ref -> getattr isn't called
+
+        # maybe implement only for _value
 
     def __getitem__(self, index):
         return self._ref._value[index]
@@ -82,17 +98,73 @@ class ConData:
         return key in self._ref._value.keys()
 
 
-def parse_format(filename):
-    return demjson.decode_file(filename)
+class ConData2:
+    def value():
+        doc = "The value property. Uses reference to get/set value."
+        def fget(self):
+            return self._ref._value
+        def fset(self, value):
+            self._ref._value = value
+        return locals()
+    value = property(**value())
 
+    def ref():
+        doc = "The ref property. References another instance."
+        def fget(self):
+            if self._ref == self:
+                return None
+            return self._ref
+        def fset(self, value):
+            if value is None:
+                value = self
+            self._ref = value
+        return locals()
+    ref = property(**ref())
 
-def parse_con(filename):
-    json = open(filename).read()
+    def __init__(self, data, parent=None, key=''):
+        self._ref = self
+        self.parent = parent
+        try:
+            path = parent.path
+        except AttributeError:
+            path = ''
+        else:
+            if not path.endswith('/'):  # ensure only single slash
+                path = path + '/'
+        self.path = path + key
 
-    p = re.compile(r"\s?=\s?");      # TODO can I replace = simply like this?
-    json = p.sub(':', json)
+        if isinstance(data, dict):
+            self.value = {}
+            for key, value in data.items():
+                self.value[key] = ConData2(value, self, key)
+        elif isinstance(data, list):
+            self.value = []
+            for i, item in enumerate(data):
+                self.value.append(ConData2(item, self, str(i)))
+        else:
+            self.value = data
 
-    return demjson.decode(json)
+    def get(self, path):
+        """Returns node at specified path."""
+        if path.startswith(self.path):  # absolute path
+            path = path[len(self.path):]
+        elif path.startswith('/'):  # absolute path with different location
+            raise LookupError("Can't resolve '" + path + 
+                "' from node '" + self.path + "'")
+        node = self
+        for key in path.split('/'):
+            if not key:
+                continue
+            try:
+                key = int(key)
+            except ValueError:
+                pass
+            try:
+                node = node.value[key]
+            except LookupError:
+                raise LookupError("Node '" + 
+                    str(key) + "' does not exist in " + node.path)
+        return node
 
 
 def main():
