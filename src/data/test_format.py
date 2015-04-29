@@ -60,7 +60,7 @@ class TestFormatSpec(unittest.TestCase):
         format = FormatSpec(data)
 
         self.assertEqual(format.its('282546d52edd4').input_type, 'Bool')
-        self.assertEqual(format.its('Root').keys.recursion.type,
+        self.assertEqual(format.its('Root').keys['recursion']['type'],
             'cde734cca8c6d536')
 
         # path -- problem: AbstractRecord
@@ -185,8 +185,8 @@ class TestInputTypeSpec(unittest.TestCase):
 
         self.assertEqual(its.id, "f9756fb2f66076a1")
         self.assertEqual(its.input_type, "Selection")
-        self.assertEqual(its.values.PETSc.description, "PETSc description")
-        self.assertEqual(its.values.METIS.description, "METIS description")
+        self.assertEqual(its.values['PETSc']['description'], "PETSc description")
+        self.assertEqual(its.values['METIS']['description'], "METIS description")
 
     def test_array(self):
         data = {
@@ -229,9 +229,9 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.input_type, "Record")
         self.assertEqual(its.type_name, "Region")
         self.assertEqual(its.type_full_name, "Region")
-        self.assertEqual(its.keys.name.default.type, 'obligatory')
-        self.assertEqual(its.keys.name.default.value, 'OBLIGATORY')
-        self.assertEqual(its.keys.name.type, '29b5533100b6f60f')
+        self.assertEqual(its.keys['name']['default']['type'], 'obligatory')
+        self.assertEqual(its.keys['name']['default']['value'], 'OBLIGATORY')
+        self.assertEqual(its.keys['name']['type'], '29b5533100b6f60f')
 
     def test_abstract_record(self):
         data = {
@@ -250,9 +250,9 @@ class TestInputTypeSpec(unittest.TestCase):
         self.assertEqual(its.implementations, ["59d2b27373f5effe"])
 
 
-class TestKeySet(unittest.TestCase):
+class TestListToDict(unittest.TestCase):
     
-    def setUp(self):
+    def test_list_to_dict(self):
         data = [
           {
             "name": "PETSc",
@@ -263,50 +263,9 @@ class TestKeySet(unittest.TestCase):
             "description": "METIS description"
           }
         ]
-        self.values = KeySet(data, key_label='name')
+        self.dict = list_to_dict(data, 'name')
 
-    def test_dot_notation(self):
-        self.assertEqual(self.values.PETSc.description, "PETSc description")
-        self.assertEqual(self.values.METIS.description, "METIS description")
+        self.assertEqual(self.dict['PETSc']['description'], "PETSc description")
+        self.assertEqual(self.dict['METIS']['description'], "METIS description")
 
-    def test_length(self):
-        self.assertEqual(len(self.values), 2)
-
-    def test_iteration(self):
-        names = ["PETSc", "METIS"]
-        for item in self.values:
-            self.assertIn(item.name, names)
-
-    def test_contains(self):
-        names = ["PETSc", "METIS"]
-        for name in names:
-            self.assertIn(name, self.values)
-
-
-class TestObjectView(unittest.TestCase):
-    
-    def test_dot_notation(self):
-        data = {
-          "computer1": {
-            "name": "sharp-pc",
-            "equipment": {
-              "mouse": "Logitech G500"
-            },
-            "components": {
-              "cpu": {
-                "brand": "Intel",
-                "name": "Intel i5",
-                "freq": "3.2 Ghz"
-              },
-              "gpu": "ATI Radeon 880M"
-            }
-          },
-          "computer2": {
-            "name": "old-pc"
-          }
-        }
-        computers = ObjectView(data)
-        self.assertEqual(computers.computer1.name, 'sharp-pc')
-        self.assertEqual(computers.computer1.components.cpu.brand, 'Intel')
-        self.assertEqual(computers.computer2.name, 'old-pc')
 

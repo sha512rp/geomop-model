@@ -86,7 +86,7 @@ class InputTypeSpec:
         self.__parse_range(data)
 
     def _parse_selection(self, data):
-        self.values = KeySet(data['values'], key_label='name')
+        self.values = list_to_dict(data['values'], 'name')
 
     def _parse_filename(self, data):
         self.file_mode = data['file_mode']
@@ -97,7 +97,7 @@ class InputTypeSpec:
 
     def _parse_record(self, data):
         self.type_name = data['type_name']
-        self.keys = KeySet(data['keys'])
+        self.keys = list_to_dict(data['keys'])
 
         for key in ['type_full_name', 'implements']:
             self.__parse_optional(data, key)
@@ -108,45 +108,15 @@ class InputTypeSpec:
         self.__parse_optional(data, 'default_descendant')
 
 
-class KeySet:
+def list_to_dict(list_, key_label='key'):
     """
-    KeySet is constructed from list of dicts.
+    Transforms a list of dictionaries into a dictionary of dictionaries.
 
-    Supports:
-      - dot notation: returns value for keyset.key.subkey
-      - iteration: returns values of all possible keys (top level)
-      - length: returns number of keys (top level)
-      - contains: key in keyset
+    Original dictionaries are assigned key specified in each of them
+    by key_label.
     """
-
-    def __init__(self, data, key_label='key'):
-        """
-            key_label: this identifier will be used as a key
-        """
-        for item in data:
-            value = ObjectView(item)
-            self.__dict__[item[key_label]] = value
-
-    def __len__(self):
-        return len(self.__dict__)
-
-    def __iter__(self):
-        for name in self.__dict__.keys():
-            yield self.__dict__[name]
-
-    def __contains__(self, item):
-        return item in self.__dict__.keys()
-
-
-class ObjectView:
-    """
-    ObjectView transforms dict into object with dot notation.
-    Supports nested dicts.
-    No reference to original dict.
-    """
-    def __init__(self, d):
-        self.__dict__ = copy.deepcopy(d)
-        for key, value in self.__dict__.items():
-            if isinstance(value, dict):
-                self.__dict__[key] = ObjectView(value)
+    dict_ = {}
+    for item in list_:
+        dict_[item[key_label]] = item
+    return dict_
 
