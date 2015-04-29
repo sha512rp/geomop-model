@@ -11,13 +11,7 @@ import re
 import pprint
 
 
-class FileHandler:
-    def parse(self, filename):
-        """Parse input file, returns ConData."""
-        raise NotImplementedError
-
-
-class ConFileHandler(FileHandler):
+class ConFileHandler:
     def parse(self, filename):
         con = open(filename).read()
         raw = self._decode_con(con)
@@ -29,118 +23,56 @@ class ConFileHandler(FileHandler):
         return demjson.decode(con)
 
 
-class YamlFileHandler(FileHandler):
+class YamlFileHandler:
     pass
 
 
-class ConData:
-    """
-    Represents one node in con data structure.
+class DataNode:
+    @property
+    def value(self):
+        return self._ref._value
 
-    Supports dot notation for records, indexing for arrays.
+    @value.setter
+    def value(self, value):
+        self._ref._value = value
 
-    Attributes:
-        _value: Returns raw value (scalar, dict, list)
-        _ref: Holds reference to use
-    """
-
-    def __init__(self, data):
-        # TODO _path
-        self._ref = self
-        if isinstance(data, dict):
-            self._value = {}
-            for key, value in data.items():
-                self._value[key] = ConData(value)
-                # osetreni ref
-        elif isinstance(data, list):
-            self._value = []
-            for item in data:
-                self._value.append(ConData(item))
-        else:
-            self._value = data
-        
-    def __setattr__(self, name, value):
-        if name == '_ref':
-            try:  # important to delete _value for reference to work
-                del self._value
-            except AttributeError:
-                pass
-            object.__setattr__(self, name, value)
-        else:
-            object.__setattr__(self._ref, name, value)
-        # _attr -> __dict__
-        # attr -> _value
-
-    def __getattr__(self, name):
-        if name in self._ref.__dict__.keys():
-            return self._ref.__dict__[name]
-        elif name in self._ref._value.keys():
-            return self._ref._value[name]
-        else:
-            raise AttributeError
-        # TODO works, isn't it too complicated?
-        # issues with _ attributes, i.e. _its
-        # _its has to be set before _ref -> getattr isn't called
-
-        # maybe implement only for _value
-
-    def __getitem__(self, index):
-        return self._ref._value[index]
-
-    def __len__(self):
-        return len(self._ref._value)
-
-    def __iter__(self):
-        for key, value in self._ref._value.items():
-            yield key, value
-
-    def __contains__(self, key):
-        return key in self._ref._value.keys()
-
-
-class ConData2:
-    def value():
-        doc = "The value property. Uses reference to get/set value."
-        def fget(self):
-            return self._ref._value
-        def fset(self, value):
-            self._ref._value = value
-        return locals()
-    value = property(**value())
-
+    @property
     def ref():
-        doc = "The ref property. References another instance."
-        def fget(self):
-            if self._ref == self:
-                return None
-            return self._ref
-        def fset(self, value):
-            if value is None:
-                value = self
-            self._ref = value
-        return locals()
-    ref = property(**ref())
+        if self._ref == self:
+            return None
+        return self._ref
 
-    def __init__(self, data, parent=None, key=''):
+    @ref.setter
+    def ref(self, value):
+        if value is None:
+            value = self
+        self._ref = value
+
+    def __init__(self, data, parent=None, name=''):
         self._ref = self
         self.parent = parent
+        self.path = self._generate_path(name)
+        self._initialize_value(data)
+
+    def _generate_path(self, name):
         try:
-            path = parent.path
+            path = self.parent.path
         except AttributeError:
             path = ''
         else:
             if not path.endswith('/'):  # ensure only single slash
                 path = path + '/'
-        self.path = path + key
+        return path + name
 
+    def _initialize_value(self, data):
         if isinstance(data, dict):
             self.value = {}
             for key, value in data.items():
-                self.value[key] = ConData2(value, self, key)
+                self.value[key] = DataNode(value, self, key)
         elif isinstance(data, list):
             self.value = []
             for i, item in enumerate(data):
-                self.value.append(ConData2(item, self, str(i)))
+                self.value.append(DataNode(item, self, str(i)))
         else:
             self.value = data
 
@@ -150,7 +82,7 @@ class ConData2:
             path = path[len(self.path):]
         elif path.startswith('/'):  # absolute path with different location
             raise LookupError("Can't resolve '" + path + 
-                "' from node '" + self.path + "'")
+                "' from node " + self.path)
         node = self
         for key in path.split('/'):
             if not key:
