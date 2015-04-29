@@ -6,9 +6,10 @@ Tests for rules
 """
 
 import unittest
+from unittest.mock import Mock
 import geomopcontext.validator.rules as rules
 from geomopcontext.validator.errors import *
-from geomopcontext.data.selection import Selection
+from geomopcontext.data.format import InputTypeSpec
 
 class TestBasicRules(unittest.TestCase):
     """
@@ -21,137 +22,109 @@ class TestBasicRules(unittest.TestCase):
     FileName
     """
 
-    def setUp(self):
-        pass
-
     def test_check_integer(self):
-        """
-            check_integer(val)
-            check_integer(val, min=a, max=b)
-        """
-        self.assertEquals(rules.check_integer(3), True);
-        self.assertEquals(rules.check_integer(-2), True);
+        its = Mock(min=0, max=3)
+        its_inf = Mock(min=float('-inf'), max=float('inf'))
+
+        self.assertEquals(rules.check_integer(3, its_inf), True);
+        self.assertEquals(rules.check_integer(-2, its_inf), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_integer(2.5);
-            rules.check_integer("3");
-            rules.check_integer({});
-            rules.check_integer([]);
+            rules.check_integer(2.5, its);
+            rules.check_integer("3", its);
+            rules.check_integer({}, its);
+            rules.check_integer([], its);
 
-        self.assertEquals(rules.check_integer(3, min=0, max=3), True);
-        self.assertEquals(rules.check_integer(2, min=0, max=3), True);
-        self.assertEquals(rules.check_integer(0, min=0, max=3), True);
+        self.assertEquals(rules.check_integer(3, its), True);
+        self.assertEquals(rules.check_integer(2, its), True);
+        self.assertEquals(rules.check_integer(0, its), True);
 
         with self.assertRaises(ValueTooSmall):
-            rules.check_integer(-1, min=0, max=3);
+            rules.check_integer(-1, its);
 
         with self.assertRaises(ValueTooBig):
-            rules.check_integer(5, min=0, max=3);
+            rules.check_integer(5, its);
 
     def test_check_double(self):
-        """
-            check_double(val)
-            check_double(val, min=a, max=b)
-        """
-        self.assertEquals(rules.check_double(3.14), True);
-        self.assertEquals(rules.check_double(-2), True);        # accepts int
+        its = Mock(min=0, max=3.14)
+        its_inf = Mock(min=float('-inf'), max=float('inf'))
+
+        self.assertEquals(rules.check_double(3.14, its_inf), True);
+        self.assertEquals(rules.check_double(-2, its_inf), True);        # accepts int
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_double("3.14")
-            rules.check_double({});
-            rules.check_double([]);
+            rules.check_double("3.14", its)
+            rules.check_double({}, its);
+            rules.check_double([], its);
 
-        self.assertEquals(rules.check_double(3.14, min=0, max=3.14), True);
-        self.assertEquals(rules.check_double(2.5, min=0, max=3.14), True);
-        self.assertEquals(rules.check_double(0, min=0, max=3.14), True);
+        self.assertEquals(rules.check_double(3.14, its), True);
+        self.assertEquals(rules.check_double(2.5, its), True);
+        self.assertEquals(rules.check_double(0, its), True);
 
         with self.assertRaises(ValueTooSmall):
-            rules.check_double(-1.3, min=0, max=3.14);
+            rules.check_double(-1.3, its);
 
         with self.assertRaises(ValueTooBig):
-            rules.check_double(5, min=0, max=3.14);
+            rules.check_double(5, its);
 
     def test_check_bool(self):
-        """
-            check_bool(val)
-        """
-        self.assertEquals(rules.check_bool(True), True);
-        self.assertEquals(rules.check_bool(False), True);
+        its = Mock()
+        self.assertEquals(rules.check_bool(True, its), True);
+        self.assertEquals(rules.check_bool(False, its), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_bool(0);
-            rules.check_bool(1);
-            rules.check_bool("1");
-            rules.check_bool("false");
-            rules.check_bool({});
-            rules.check_bool([]);
+            rules.check_bool(0, its);
+            rules.check_bool(1, its);
+            rules.check_bool("1", its);
+            rules.check_bool("false", its);
+            rules.check_bool({}, its);
+            rules.check_bool([], its);
 
     def test_check_string(self):
-        """
-            check_string(val)
-        """
-        self.assertEquals(rules.check_string("abc"), True);
+        its = Mock()
+        self.assertEquals(rules.check_string("abc", its), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_string(0);
-            rules.check_string({});
-            rules.check_string([]);
+            rules.check_string(0, its);
+            rules.check_string({}, its);
+            rules.check_string([], its);
 
     def test_check_selection(self):
-        """
-            check_selection(val, selection)
-        """
+        its = Mock(values=Mock(keys=Mock(return_value=['a', 'b', 'c'])))
+        its.name = 'MySelection'
 
-        values = [  {
-                        "name" : "any_neighboring",
-                        "description" : "Add edge for any pair of neighboring elements."
-                    }, {
-                        "name" : "any_wight_lower_dim_cuts",
-                        "description" : "Same as before and assign higher weight to cuts of lower dimension in order to make them stick to one face."
-                    }, {
-                        "name" : "same_dimension_neghboring",
-                        "description" : "Add edge for any pair of neighboring elements of same dimension (bad for matrix multiply)."
-                }]
-        GraphType = Selection('GraphType', values)
-
-        self.assertEquals(rules.check_selection(
-            'any_wight_lower_dim_cuts', GraphType), True);
-        self.assertEquals(rules.check_selection(
-            'any_wight_LOWER_dim_cuts', GraphType), True);
+        self.assertEquals(rules.check_selection('a', its), True)
+        self.assertEquals(rules.check_selection('b', its), True)
+        self.assertEquals(rules.check_selection('c', its), True)
 
         with self.assertRaises(InvalidOption):
-            rules.check_selection('invalid',GraphType)
+            self.assertEquals(rules.check_selection('d', its), True)
 
     def test_check_filename(self):
-        """
-            check_filename(val)
-            Currently works same as check_string.
-        """
-        self.assertEquals(rules.check_filename("abc"), True);
+        its = Mock()
+        self.assertEquals(rules.check_filename("abc", its), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_filename(0);
-            rules.check_filename({});
-            rules.check_filename([]);
+            rules.check_filename(0, its);
+            rules.check_filename({}, its);
+            rules.check_filename([], its);
 
     def test_check_array(self):
-        """
-            check_array(val)
-            check_array(val, min=a, max=b)
-        """
-        self.assertEquals(rules.check_array([]), True);
-        self.assertEquals(rules.check_array([1, 2], min=1, max=5), True);
-        self.assertEquals(rules.check_array([1], min=1, max=5), True);
-        self.assertEquals(rules.check_array([1, 2, 3, 4, 5], min=1, max=5), True);
+        its = Mock(min=1, max=5)
+        its_inf = Mock(min=0, max=float('inf'))
+        self.assertEquals(rules.check_array([], its_inf), True);
+        self.assertEquals(rules.check_array([1, 2], its), True);
+        self.assertEquals(rules.check_array([1], its), True);
+        self.assertEquals(rules.check_array([1, 2, 3, 4, 5], its), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_array(23)
+            rules.check_array(23, its)
 
         with self.assertRaises(NotEnoughItems):
-            rules.check_array([1, 2], min=3, max=5);
+            rules.check_array([], its);
 
         with self.assertRaises(TooManyItems):
-            rules.check_array([1, 2, 3], min=0, max=2);
+            rules.check_array([1, 2, 3, 4, 5, 6], its);
 
 
 class TestRuleParser(unittest.TestCase):
