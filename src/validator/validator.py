@@ -50,7 +50,11 @@ def validate_node(node, its=None):
         return _validate_simple_check(node, its)
     elif its.input_type == 'Record':
         return _validate_record(node, its)
-
+    elif its.input_type == 'AbstractRecord':
+        return _validate_abstract(node, its)
+    else:
+        raise Exception("Format error: Unknown input_type '"
+            + its.input_type + "'")
 
 def _validate_simple_check(node, its):
     result = ValidationResult()
@@ -70,6 +74,17 @@ def _validate_record(node, its):
         except ValidationError as error:
             _report_validation_error(result, error, node)
     return result
+
+
+def _validate_abstract(node, its):
+    try:
+        record_its = rules.get_abstractrecord_type(node.value, its)
+    except ValidationError as error:
+        result = ValidationResult()
+        _report_validation_error(result, error, node)
+        return result
+    else:
+        return _validate_record(node, record_its)
 
 
 def _report_validation_error(result, error, node):
