@@ -31,6 +31,18 @@ class FormatSpec:
                 pass  # not specified type_name -> skip
             else:
                 self.named_types[type_name] = its
+        self._substitute_ids_with_references()
+
+    def _substitute_ids_with_references(self):
+        """
+        Creates links between ITS. Replaces ids with references.
+        """
+        for key, its in self.types.items():
+            if its.input_type == 'Array':
+                its.subtype = self.types[its.subtype]
+            elif its.input_type == 'AbstractRecord':
+                for i, id_ in enumarate(its.implementations):
+                    its.implementations[i] = self.types[id_]
 
     def its(self, key=None):
         """
