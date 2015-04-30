@@ -5,9 +5,6 @@ Contains format specification class and methods to parse it from JSON.
 @author: Tomas Krizek
 """
 
-import copy
-from collections import namedtuple
-
 
 class FormatSpec:
     """
@@ -43,6 +40,8 @@ class FormatSpec:
             elif its.input_type == 'AbstractRecord':
                 self._substitute_implementations(its)
                 self._substitute_default_descendant(its)
+            elif its.input_type == 'Record':
+                self._substitute_key_type(its)
 
     def _substitute_implementations(self, its):
         impls = {}
@@ -59,6 +58,9 @@ class FormatSpec:
         else:
             its.default_descendant = self.types[id_]
 
+    def _substitute_key_type(self, its):
+        for key, value in its.keys.items():
+            value['type'] = self.types[value['type']]
 
     def its(self, key=None):
         """

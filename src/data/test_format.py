@@ -61,7 +61,7 @@ class TestFormatSpec(unittest.TestCase):
 
         self.assertEqual(format.its('282546d52edd4').input_type, 'Bool')
         self.assertEqual(format.its('Root').keys['recursion']['type'],
-            'cde734cca8c6d536')
+            format.its('Root'))
         self.assertEqual(format.its('5985ba73963f9447').subtype.input_type,
           'Bool')
 
