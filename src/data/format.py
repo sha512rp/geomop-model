@@ -9,9 +9,6 @@ Contains format specification class and methods to parse it from JSON.
 class FormatSpec:
     """
     Contains complete input type specification (ITS).
-
-    Functions:
-        - return default value for any path
     """
 
     def __init__(self, data):

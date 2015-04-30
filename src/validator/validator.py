@@ -5,87 +5,100 @@ Validator for Flow123D CON files
 @author: Tomas Krizek
 """
 
-from enum import Enum
-
 from geomopcontext.validator.errors import *
 import geomopcontext.validator.rules as rules
 
 
-SIMPLE_CHECKS = ['Integer', 'Double', 'Bool', 'String',
-                    'Selection', 'FileName', 'Array']
-
-
-class ValidationResult:
-
-    def __init__(self):
-        self._errors = []
-        self.valid = True
-
-    def report(self, error):
-        """
-        Report an error.
-        """
-        self.valid = False
-        self._errors.append(error)
+class Validator:
+    SCALAR = ['Integer', 'Double', 'Bool', 'String', 'Selection', 'FileName']
 
     @property
     def errors(self):
         return tuple(self._errors)
 
+    def validate(self, node, its=None):
+        """
+        Performs data validation of node.
 
-def validate(node, format):
-    """
-    Performs data validation from the root rule.
+        Validation is performed recursively on all children nodes as well.
 
-    Returns True if valid, list of errors otherwise.
-    """
-    pass
+        Returns True when all data was correctly validated, False otherwise.
+        Attribute errors contains a list of occured errors.
+        """
+        self._errors = []
+        self.valid = True
 
+        if its is None:
+            its = node.its
 
-def validate_node(node, its=None):
-    if its is None:
-        its = node.its
-    
-    if its.input_type in SIMPLE_CHECKS:
-        return _validate_simple_check(node, its)
-    elif its.input_type == 'Record':
-        return _validate_record(node, its)
-    elif its.input_type == 'AbstractRecord':
-        return _validate_abstract(node, its)
-    else:
-        raise Exception("Format error: Unknown input_type '"
-            + its.input_type + "'")
+        self._validate_node(node, its)
 
-def _validate_simple_check(node, its):
-    result = ValidationResult()
-    try:
-        getattr(rules, 'check_%s' % its.input_type.lower())(node.value, its)
-    except ValidationError as error:
-        _report_validation_error(result, error, node)
-    return result
+        return self.valid
 
+    def _validate_node(self, node, its=None):
+        """
+        Determines if node contains correct value.
 
-def _validate_record(node, its):
-    result = ValidationResult()
-    keys = list(node.value.keys()) + list(its.keys.keys())
-    for key in keys:
+        Method verifies node recursively. All descendant nodes are checked.
+        """
+        if its is None:
+            its = node.its
+        
+        if its.input_type in Validator.SCALAR:
+            self._validate_scalar(node, its)
+        elif its.input_type == 'Record':
+            self._validate_record(node, its)
+        elif its.input_type == 'AbstractRecord':
+            self._validate_abstract(node, its)
+        elif its.input_type == 'Array':
+            self._validate_array(node, its)
+        else:
+            raise Exception("Format error: Unknown input_type '"
+                + its.input_type + "'")
+
+    def _validate_scalar(self, node, its):
         try:
-            rules.check_record_key(node.value, key, its)
+            getattr(rules, 'check_%s' % its.input_type.lower())(node.value, its)
         except ValidationError as error:
-            _report_validation_error(result, error, node)
-    return result
+            self._report_error(node, error)
+
+    def _validate_record(self, node, its):
+        keys = set(list(node.value.keys()) + list(its.keys.keys()))
+        for key in keys:
+            try:
+                rules.check_record_key(node.value, key, its)
+            except ValidationError as error:
+                self._report_error(node, error)
+                if isinstance(error, UnknownKey):
+                    continue
+            if key in node.value:
+                self._validate_node(node.value[key], its.keys[key]['type'])
+
+    def _validate_abstract(self, node, its):
+        try:
+            record_its = rules.get_abstractrecord_type(node.value, its)
+        except ValidationError as error:
+            self._report_error(node, error)
+        else:
+            self._validate_record(node, record_its)
+
+    def _validate_array(self, node, its):
+        try:
+            rules.check_array(node.value, its)
+        except ValidationError as error:
+            self._report_error(node, error)
+        for item in node.value:
+            self._validate_node(item, its.subtype)
+
+    def __init__(self):
+        self.valid = True
+        self._errors = []
+
+    def _report_error(self, node, error):
+        """
+        Report an error.
+        """
+        self.valid = False
+        self._errors.append((node, error))
 
 
-def _validate_abstract(node, its):
-    try:
-        record_its = rules.get_abstractrecord_type(node.value, its)
-    except ValidationError as error:
-        result = ValidationResult()
-        _report_validation_error(result, error, node)
-        return result
-    else:
-        return _validate_record(node, record_its)
-
-
-def _report_validation_error(result, error, node):
-    result.report(ValidationError(node.path + ': ' + str(error)))

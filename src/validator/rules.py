@@ -79,7 +79,7 @@ def check_record_key(record, key, its):
         raise ValidationTypeError("Expecting type Record")
 
     if key not in its.keys and key != 'TYPE':
-        raise UnknownKey(key, its.name)
+        raise UnknownKey(key, its.type_name)
 
     try:
         key_type = its.keys[key]['default']['type']
@@ -90,7 +90,7 @@ def check_record_key(record, key, its):
             try:
                 record[key]
             except KeyError:
-                raise MissingKey(key, its.name)
+                raise MissingKey(key, its.type_name)
 
     return True
 
@@ -100,7 +100,7 @@ def get_abstractrecord_type(record, its):
         raise ValidationTypeError("Expecting type (Abstract)Record")
 
     try:
-        type_name = record['TYPE']
+        type_name = record['TYPE'].value
     except KeyError:
         try:
             type_ = its.default_descendant

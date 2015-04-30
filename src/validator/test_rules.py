@@ -113,18 +113,18 @@ class TestBasicRules(unittest.TestCase):
         its = Mock(min=1, max=5)
         its_inf = Mock(min=0, max=float('inf'))
         self.assertEquals(rules.check_array([], its_inf), True);
-        self.assertEquals(rules.check_array([1, 2], its), True);
-        self.assertEquals(rules.check_array([1], its), True);
-        self.assertEquals(rules.check_array([1, 2, 3, 4, 5], its), True);
+        self.assertEquals(rules.check_array([None]*2, its), True);
+        self.assertEquals(rules.check_array([None]*1, its), True);
+        self.assertEquals(rules.check_array([None]*5, its), True);
 
         with self.assertRaises(ValidationTypeError):
-            rules.check_array(23, its)
+            rules.check_array(None, its)
 
         with self.assertRaises(NotEnoughItems):
             rules.check_array([], its);
 
         with self.assertRaises(TooManyItems):
-            rules.check_array([1, 2, 3, 4, 5, 6], its);
+            rules.check_array([None]*6, its);
 
     def test_check_record_key(self):
         keys = {
@@ -134,19 +134,18 @@ class TestBasicRules(unittest.TestCase):
             'c': {'default': {'type': 'value at read time'}},
             'd': {'default': {'type': 'optional'}}
         }
-        its = Mock(keys=keys)
-        its.name = 'MyRecord'
+        its = Mock(keys=keys, type_name='MyRecord')
 
-        self.assertEquals(rules.check_record_key({'a1': 1}, 'a1', its), True)
-        self.assertEquals(rules.check_record_key({'a1': 1}, 'b', its), True)
-        self.assertEquals(rules.check_record_key({'a1': 1}, 'c', its), True)
-        self.assertEquals(rules.check_record_key({'a1': 1}, 'd', its), True)
+        self.assertEquals(rules.check_record_key({'a1': None}, 'a1', its), True)
+        self.assertEquals(rules.check_record_key({'a1': None}, 'b', its), True)
+        self.assertEquals(rules.check_record_key({'a1': None}, 'c', its), True)
+        self.assertEquals(rules.check_record_key({'a1': None}, 'd', its), True)
 
         with self.assertRaises(MissingKey):
-            rules.check_record_key({'a1': 1}, 'a2', its)
+            rules.check_record_key({'a1': None}, 'a2', its)
 
         with self.assertRaises(UnknownKey):
-            rules.check_record_key({'unknown': 1}, 'unknown', its)
+            rules.check_record_key({'unknown': None}, 'unknown', its)
 
         with self.assertRaises(ValidationTypeError):
             rules.check_record_key([], 'a', its);
@@ -162,47 +161,19 @@ class TestBasicRules(unittest.TestCase):
         its_no_default = Mock(spec=['implementations'], 
             implementations={'type1': type1, 'type2': type2, 'type3': type3})
 
-        self.assertEqual(rules.get_abstractrecord_type({'TYPE': 'type2'},
-            its), type2)
+        self.assertEqual(rules.get_abstractrecord_type(
+            {'TYPE': Mock(value='type2')}, its), type2)
         self.assertEqual(rules.get_abstractrecord_type({}, its), type1)
 
-        self.assertEqual(rules.get_abstractrecord_type({'TYPE': 'type3'},
-            its_no_default), type3)
+        self.assertEqual(rules.get_abstractrecord_type(
+            {'TYPE': Mock(value='type3')}, its_no_default), type3)
         with self.assertRaises(MissingAbstractRecordType):
             rules.get_abstractrecord_type({}, its_no_default)
 
         with self.assertRaises(InvalidAbstractRecordType):
-            rules.get_abstractrecord_type({'TYPE': 'invalid'}, its)
+            rules.get_abstractrecord_type(
+                {'TYPE': Mock(value='invalid')}, its)
 
         with self.assertRaises(ValidationTypeError):
             rules.get_abstractrecord_type([], its);
 
-
-class TestRuleParser(unittest.TestCase):
-    pass
-
-
-    # def test_rule_parser_selection(self):
-    #     """
-    #         single rule parse test
-    #     """
-    #     rules = [{
-    #             "id" : "f9756fb2f66076a1",
-    #             "input_type" : "Selection",
-    #             "name" : "PartTool",
-    #             "full_name" : "PartTool",
-    #             "description" : "Select the partitioning tool to use.",
-    #             "values" : [
-    #             { "value" : "0",
-    #              "name" : "PETSc",
-    #             "description" : "Use PETSc interface to various partitioning tools." },
-    #             { "value" : "1",
-    #              "name" : "METIS",
-    #             "description" : "Use direct interface to Metis." }]
-    #             }]
-    #     self.rule_parser.parse(rules)
-    #     self.rule_parser.rules['f9756fb2f66076a1'] = 
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -65,12 +65,6 @@ class TestFormatSpec(unittest.TestCase):
         self.assertEqual(format.its('5985ba73963f9447').subtype.input_type,
           'Bool')
 
-        # path -- problem: AbstractRecord
-        # self.assertEqual(format.get_its('/bools').input_type, 'Array')
-        # self.assertEqual(format.get_its('/bools/43').input_type, 'Bool')
-        # self.assertEqual(format.get_its('/recursion/recursion/bools').max, 5)
-        # self.assertIsNone(format.get_its('bools'))  # non-existent path
-
 
 class TestInputTypeSpec(unittest.TestCase):
     """
