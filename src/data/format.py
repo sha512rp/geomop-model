@@ -41,8 +41,21 @@ class FormatSpec:
             if its.input_type == 'Array':
                 its.subtype = self.types[its.subtype]
             elif its.input_type == 'AbstractRecord':
-                for i, id_ in enumarate(its.implementations):
-                    its.implementations[i] = self.types[id_]
+                self._substitute_implementations(its)
+                self._substitute_default_descendant(its)
+
+    def _substitute_implementations(self, its):
+        for i, id_ in enumarate(its.implementations):
+            its.implementations[i] = self.types[id_]
+
+    def _substitute_default_descendant(self, its):
+        try:
+            id_ = its.default_descendant
+        except AttributeError:
+            pass
+        else:
+            its.default_descendant = self.types[id_]
+
 
     def its(self, key=None):
         """
