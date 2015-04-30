@@ -153,7 +153,29 @@ class TestBasicRules(unittest.TestCase):
 
 
     def test_check_abstractrecord(self):
-        raise NotImplementedError
+        type1 = Mock(type_name='type1')
+        type2 = Mock(type_name='type2')
+        type3 = Mock(type_name='type3')
+        its = Mock(default_descendant=type1, implementations={
+            'type1': type1,'type2': type2, 'type3': type3})
+        its.name = 'MyAbstractRecord'
+        its_no_default = Mock(spec=['implementations'], 
+            implementations={'type1': type1, 'type2': type2, 'type3': type3})
+
+        self.assertEqual(rules.get_abstractrecord_type({'TYPE': 'type2'},
+            its), type2)
+        self.assertEqual(rules.get_abstractrecord_type({}, its), type1)
+
+        self.assertEqual(rules.get_abstractrecord_type({'TYPE': 'type3'},
+            its_no_default), type3)
+        with self.assertRaises(MissingAbstractRecordType):
+            rules.get_abstractrecord_type({}, its_no_default)
+
+        with self.assertRaises(InvalidAbstractRecordType):
+            rules.get_abstractrecord_type({'TYPE': 'invalid'}, its)
+
+        with self.assertRaises(ValidationTypeError):
+            rules.get_abstractrecord_type([], its);
 
 
 class TestRuleParser(unittest.TestCase):
