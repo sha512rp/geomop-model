@@ -20,7 +20,26 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(validate_node(node).valid, True)
 
         node.value = 4
-        self.assertEqual(validate_node(node).valid, False)
+        result = validate_node(node)
+        self.assertEqual(result.valid, False)
+        self.assertEqual(len(result.errors), 1)
+
+    def test_validate_record(self):
+        its = Mock(input_type='Record', keys={
+            'a1': {'default': {'type': 'obligatory'}},
+            'a2': {'default': {'type': 'obligatory'}},
+            'b': {'default': {'type': 'value at declaration'}},
+            'c': {'default': {'type': 'value at read time'}},
+            'd': {'default': {'type': 'optional'}}
+        })
+        its.name = 'MyRecord'
+        node=Mock(its=its, value={'a1': 1, 'a2': 2}, path='/record')
+        self.assertEqual(validate_node(node).valid, True)
+
+        node.value = {'a1': 1, 'd': 2, 'e': 4}
+        result = validate_node(node)
+        self.assertEqual(result.valid, False)
+        self.assertEqual(len(result.errors), 2)
 
     # def test_validate_array(self):
     #     its = Mock(input_type='Integer', min=0, max=3)
