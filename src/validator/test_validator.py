@@ -14,14 +14,22 @@ from geomopcontext.data.format import FormatSpec
 
 class TestValidator(unittest.TestCase):
 
-    def test_validate_node(self):
+    def test_validate_simple_check(self):
         its = Mock(input_type='Integer', min=0, max=3)
         node = Mock(its=its, value=2, path='/problem/1/number')
-        self.assertEqual(validate_node(node), True)
+        self.assertEqual(validate_node(node).valid, True)
 
         node.value = 4
-        with self.assertRaises(ValidationError):
-            validate_node(node)
+        self.assertEqual(validate_node(node).valid, False)
+
+    # def test_validate_array(self):
+    #     its = Mock(input_type='Integer', min=0, max=3)
+    #     node = Mock(its=its, value=2, path='/problem/1/number')
+    #     self.assertEqual(validate_node(node).valid, True)
+
+    #     node.value = 4
+    #     self.assertEqual(validate_node(node).valid, False)
+            
 
 #     def test_validator_integer(self):
 #         format_data = [{
