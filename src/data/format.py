@@ -45,8 +45,11 @@ class FormatSpec:
                 self._substitute_default_descendant(its)
 
     def _substitute_implementations(self, its):
-        for i, id_ in enumarate(its.implementations):
-            its.implementations[i] = self.types[id_]
+        impls = {}
+        for id_ in its.implementations:
+            type_ = self.types[id_]
+            impls[type_.type_name] = type_
+        its.implementations = impls
 
     def _substitute_default_descendant(self, its):
         try:
@@ -92,7 +95,6 @@ class InputTypeSpec:
             self.min = data['range'][0]
         except KeyError:
             self.min = default[0]
-
         try:
             self.max = data['range'][1]
         except KeyError:
@@ -123,13 +125,11 @@ class InputTypeSpec:
     def _parse_record(self, data):
         self.type_name = data['type_name']
         self.keys = list_to_dict(data['keys'])
-
         for key in ['type_full_name', 'implements']:
             self.__parse_optional(data, key)
 
     def _parse_abstractrecord(self, data):
         self.implementations = data['implementations']
-
         self.__parse_optional(data, 'default_descendant')
 
 
