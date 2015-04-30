@@ -49,7 +49,7 @@ def check_string(value, its):
 
 
 def check_selection(value, its):
-    if (value in its.values.keys()):
+    if (value in its.values):
         return True
     else:
         raise InvalidOption(value, its.name)

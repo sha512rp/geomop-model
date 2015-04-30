@@ -90,7 +90,7 @@ class TestBasicRules(unittest.TestCase):
             rules.check_string([], its);
 
     def test_check_selection(self):
-        its = Mock(values=Mock(keys=Mock(return_value=['a', 'b', 'c'])))
+        its = Mock(values={'a': 1, 'b': 2, 'c': 3})
         its.name = 'MySelection'
 
         self.assertEquals(rules.check_selection('a', its), True)
