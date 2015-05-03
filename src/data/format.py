@@ -5,6 +5,13 @@ Contains format specification class and methods to parse it from JSON.
 @author: Tomas Krizek
 """
 
+import json
+
+
+def parse_format(filename):
+    """Return root ITS."""
+    return FormatSpec(json.load(open(filename))).its()
+
 
 class FormatSpec:
     """

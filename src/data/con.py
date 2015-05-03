@@ -12,15 +12,39 @@ import pprint
 
 
 class ConFileHandler:
+
     def parse(self, filename):
         con = open(filename).read()
         raw = self._decode_con(con)
+        refs = self._extract_references(raw)
         # TODO replace ref
 
     def _decode_con(self, con):
         p = re.compile(r"\s?=\s?");  # TODO can I replace = simply like this?
         con = p.sub(':', con)
         return demjson.decode(con)
+
+    def _extract_references(self, json):
+        def crawl(data, path):
+            if isinstance(data, dict):
+                try:
+                    ref_path = data['REF']
+                except KeyError:
+                    pass
+                else:
+                    refs[path] = ref_path
+                    del data['REF']
+                # crawl for all keys
+                for key, value in data.items():
+                    crawl(value, path + '/' + key)
+            elif isinstance(data, list):
+                # crawl for all records
+                for i, item in enumerate(data):
+                    crawl(item, path + '/' + str(i))
+
+        refs = {}
+        crawl(json, '')
+        return refs
 
 
 class YamlFileHandler:

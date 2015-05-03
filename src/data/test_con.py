@@ -11,6 +11,25 @@ from geomopcontext.data.format import FormatSpec
 from geomopcontext.data.con import *
 
 
+class TestConFileHandler(unittest.TestCase):
+    def test_extract_references(self):
+        raw = {
+            'a': {'REF': '/d'},
+            'b': {'REF': '/a/x'},
+            'c': [
+                {'REF': '/b'},
+                {'REF': '/c/0'}
+            ],
+            'd': {'x': 3}
+        }
+        refs = ConFileHandler()._extract_references(raw)
+
+        self.assertEqual(refs['/a'], '/d')
+        self.assertEqual(refs['/b'], '/a/x')
+        self.assertEqual(refs['/c/0'], '/b')
+        self.assertEqual(refs['/c/1'], '/c/0')
+
+
 class TestDataNode(unittest.TestCase):
 
     def test_value(self):
