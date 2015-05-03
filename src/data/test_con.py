@@ -46,7 +46,7 @@ class TestConFileHandler(unittest.TestCase):
             'b': {'REF': '/c'},
             'c': {'REF': '/a'}
         }
-        
+
         with self.assertRaises(ReferenceError):
             root = ConFileHandler._parse_json(raw)
             
@@ -80,6 +80,15 @@ class TestConFileHandler(unittest.TestCase):
         self.assertEqual(root.get('/c/0').value, root.get('/d/x').value)
         self.assertEqual(root.get('/c/1').value, root.get('/d/y').value)
         self.assertEqual(root.get('/e').value, root.get('/c').value)
+
+    def test_relative_reference(self):
+        raw = {
+            'a': {'x': 0, 'y': {'REF': '../../b'}},
+            'b': 2,
+        }
+        root = ConFileHandler._parse_json(raw)
+
+        self.assertEqual(root.get('/a/y')._ref, root.get('/b')._ref)
 
 
 class TestDataNode(unittest.TestCase):
@@ -202,6 +211,7 @@ class TestDataNode(unittest.TestCase):
         self.assertEqual(problem.get('/problem'), problem)
         self.assertEqual(problem.get('/problem/one').value, 1)
         self.assertEqual(problem.get('three/0/a').value, 2)  # relative
+        self.assertEqual(problem.get('../data/0').value, True)
 
 
         with self.assertRaises(LookupError):

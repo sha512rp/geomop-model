@@ -12,6 +12,10 @@ import pprint
 from copy import copy
 
 
+def parse_con(filename):
+    return ConFileHandler.parse(filename)
+
+
 class ConFileHandler:
 
     @staticmethod
@@ -28,7 +32,11 @@ class ConFileHandler:
             length = len(refs)
             for path, ref_path in copy(refs).items():
                 try:
-                    root.get(path).ref = root.get(ref_path)
+                    node = root.get(path)
+                    if ref_path.startswith('/'):  # absolute ref
+                        node.ref = root.get(ref_path)
+                    else:  # relative ref
+                        node.ref = node.get(ref_path)
                 except LookupError:
                     continue
                 else: del refs[path]
@@ -38,7 +46,7 @@ class ConFileHandler:
         return root
 
     @staticmethod
-    def _decode_con(self, con):
+    def _decode_con(con):
         p = re.compile(r"\s?=\s?");  # TODO can I replace = simply like this?
         con = p.sub(':', con)
         return demjson.decode(con)
@@ -144,7 +152,10 @@ class DataNode:
             self.value = data
 
     def get(self, path):
-        """Returns node at specified path."""
+        """
+        Returns node at specified path.
+
+        """
         if path.startswith(self.path):  # absolute path
             path = path[len(self.path):]
         elif path.startswith('/'):  # absolute path with different location
@@ -152,7 +163,10 @@ class DataNode:
                 "' from node " + self.path)
         node = self
         for key in path.split('/'):
-            if not key:
+            if not key or key == '.':
+                continue
+            elif key == '..':
+                node = node.parent
                 continue
             try:
                 key = int(key)
@@ -165,21 +179,13 @@ class DataNode:
                     str(key) + "' does not exist in " + node.path)
         return node
 
+    def __repr__(self):
+        return 'DataNode(' + self.path + \
+            ((' (ref ' + str(self._ref) + ')') if self._ref != self 
+            else '') + ')'
+
 
 class ReferenceError(Exception):
     def __init__(self, message):
         super(ReferenceError, self).__init__(message)
-
-
-def main():
-    pp = pprint.PrettyPrinter()
-    con = parse_con("../data/con/flow_dirichlet.con")
-    format = parse_format("../data/format/flow_1.8.2_input_format.json")
-
-    # pp.pprint(format)
-
-
-if __name__ == '__main__':
-    main()
-
 
