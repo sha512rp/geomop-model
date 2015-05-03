@@ -9,22 +9,42 @@ GeomMop Model data structure
 import demjson
 import re
 import pprint
+from copy import copy
 
 
 class ConFileHandler:
 
-    def parse(self, filename):
+    @staticmethod
+    def parse(filename):
         con = open(filename).read()
-        raw = self._decode_con(con)
-        refs = self._extract_references(raw)
-        # TODO replace ref
+        data = ConFileHandler._decode_con(con)
+        return ConFileHandler._parse_json(data)
 
+    @staticmethod
+    def _parse_json(data):
+        refs = ConFileHandler._extract_references(data)
+        root = DataNode(data)
+        while len(refs) > 0:
+            length = len(refs)
+            for path, ref_path in copy(refs).items():
+                try:
+                    root.get(path).ref = root.get(ref_path)
+                except LookupError:
+                    continue
+                else: del refs[path]
+            if length == len(refs):
+                # no reference removed -> impossible to resolve references
+                raise ReferenceError("Can not resolve references.")
+        return root
+
+    @staticmethod
     def _decode_con(self, con):
         p = re.compile(r"\s?=\s?");  # TODO can I replace = simply like this?
         con = p.sub(':', con)
         return demjson.decode(con)
 
-    def _extract_references(self, json):
+    @staticmethod
+    def _extract_references(json):
         def crawl(data, path):
             if isinstance(data, dict):
                 try:
@@ -52,13 +72,36 @@ class YamlFileHandler:
 
 
 class DataNode:
+
+    def circular_check(fn):
+        def inner(*args, **kwargs):
+            try:
+                return fn(*args, **kwargs)
+            except RuntimeError:
+                raise ReferenceError("Circular reference detected!")
+        return inner
+
     @property
+    @circular_check
     def value(self):
-        return self._ref._value
+        ref = self._ref
+        if ref == ref._ref:
+            # reference points to itself -> end-point value
+            return ref._value
+        else:
+            # multi-level reference, resolve recursively
+            return ref.value
 
     @value.setter
+    @circular_check
     def value(self, value):
-        self._ref._value = value
+        ref = self._ref
+        if ref == ref._ref:
+            # reference points to itself -> end-point value
+            ref._value = value
+        else:
+            # multi-level reference, resolve recursively
+            ref.value = value
 
     @property
     def ref():
@@ -121,6 +164,11 @@ class DataNode:
                 raise LookupError("Node '" + 
                     str(key) + "' does not exist in " + node.path)
         return node
+
+
+class ReferenceError(Exception):
+    def __init__(self, message):
+        super(ReferenceError, self).__init__(message)
 
 
 def main():

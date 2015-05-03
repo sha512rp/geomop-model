@@ -12,22 +12,74 @@ from geomopcontext.data.con import *
 
 
 class TestConFileHandler(unittest.TestCase):
-    def test_extract_references(self):
+    def test_references(self):
         raw = {
-            'a': {'REF': '/d'},
-            'b': {'REF': '/a/x'},
+            'a': {'x': 0, 'y': {'REF': '/b/y'}},
+            'b': {'REF': '/d'},
             'c': [
-                {'REF': '/b'},
-                {'REF': '/c/0'}
+                {'REF': '/b/x'},
+                {'REF': '/a/y'}
             ],
-            'd': {'x': 3}
+            'd': {'x': 3, 'y': 5}
         }
-        refs = ConFileHandler()._extract_references(raw)
+        refs = ConFileHandler._extract_references(raw)
 
-        self.assertEqual(refs['/a'], '/d')
-        self.assertEqual(refs['/b'], '/a/x')
-        self.assertEqual(refs['/c/0'], '/b')
-        self.assertEqual(refs['/c/1'], '/c/0')
+        self.assertEqual(refs['/a/y'], '/b/y')
+        self.assertEqual(refs['/b'], '/d')
+        self.assertEqual(refs['/c/0'], '/b/x')
+        self.assertEqual(refs['/c/1'], '/a/y')
+
+    def test_circular_reference(self):
+        raw = {
+            'a': {'REF': '/b'},
+            'b': {'REF': '/c'},
+            'c': {'REF': '/a'}
+        }
+
+        root = ConFileHandler._parse_json(raw)
+        with self.assertRaises(ReferenceError):
+            root.get('/a').value
+
+    def test_reference_error(self):
+        raw = {
+            'a': {'REF': '/b/x'},
+            'b': {'REF': '/c'},
+            'c': {'REF': '/a'}
+        }
+        
+        with self.assertRaises(ReferenceError):
+            root = ConFileHandler._parse_json(raw)
+            
+    def test_parse_json(self):
+        raw = {
+            'a': {'x': 0, 'y': {'REF': '/b/y'}},
+            'b': {'REF': '/d'},
+            'c': [
+                {'REF': '/b/x'},
+                {'REF': '/a/y'}
+            ],
+            'd': {'x': 3, 'y': 5},
+            'e': {'REF': '/c'}
+        }
+        root = ConFileHandler._parse_json(raw)
+
+        self.assertEqual(root.get('/a/x').value, 0)
+        self.assertEqual(root.get('/a/y').value, 5)
+        self.assertEqual(root.get('/b/x').value, 3)
+        self.assertEqual(root.get('/b/y').value, 5)
+        self.assertEqual(root.get('/c/0').value, 3)
+        self.assertEqual(root.get('/c/1').value, 5)
+        self.assertEqual(root.get('/d/x').value, 3)
+        self.assertEqual(root.get('/d/y').value, 5)
+        self.assertEqual(root.get('/e/0').value, 3)
+        self.assertEqual(root.get('/e/1').value, 5)
+
+        # test references
+        self.assertEqual(root.get('/a/y').value, root.get('/d/y').value)
+        self.assertEqual(root.get('/b').value, root.get('/d').value)
+        self.assertEqual(root.get('/c/0').value, root.get('/d/x').value)
+        self.assertEqual(root.get('/c/1').value, root.get('/d/y').value)
+        self.assertEqual(root.get('/e').value, root.get('/c').value)
 
 
 class TestDataNode(unittest.TestCase):
