@@ -174,6 +174,3 @@ class TestBasicRules(unittest.TestCase):
             rules.get_abstractrecord_type(
                 {'TYPE': Mock(value='invalid')}, its)
 
-        with self.assertRaises(ValidationTypeError):
-            rules.get_abstractrecord_type([], its);
-

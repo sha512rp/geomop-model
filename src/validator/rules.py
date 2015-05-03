@@ -96,12 +96,9 @@ def check_record_key(record, key, its):
 
 
 def get_abstractrecord_type(record, its):
-    if not isinstance(record, dict):
-        raise ValidationTypeError("Expecting type (Abstract)Record")
-
     try:
         type_name = record['TYPE'].value
-    except KeyError:
+    except (KeyError, TypeError):
         try:
             type_ = its.default_descendant
         except AttributeError:
