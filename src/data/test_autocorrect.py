@@ -62,15 +62,11 @@ class TestAutoCorrect(unittest.TestCase):
             type_name='MyRecord',
             reducible_to_key='a')
 
-        root = DataNode({'path': [1, 2, 3]})
-        node = root.get('/path')
-        node2 = root.get('/path/1')
+        root = DataNode('str')
+        expanded = ac._expand_reducible_to_key(root, its)
 
-        expanded = ac._expand_reducible_to_key(node, its)
-
-        self.assertEquals(expanded.path, '/path')
-        self.assertEquals(expanded.value['a'], node)
-        self.assertEqual(expanded.get('a/1'), node2)
+        self.assertEquals(expanded.get('/a').value, 'str')
+        self.assertEquals(expanded.get('/a').path, '/a')
 
 
     def test_expand_abstractrecord(self):
@@ -89,12 +85,41 @@ class TestAutoCorrect(unittest.TestCase):
             input_type='AbstractRecord',
             default_descendant=its_record)
 
-        root = DataNode({'path': [1, 2, 3]})
-        node = root.get('/path')
-        node2 = root.get('/path/1')
+        root = DataNode('str')
 
-        expanded = ac._expand_reducible_to_key(node, its)
+        expanded = ac._expand_reducible_to_key(root, its)
+        self.assertEqual(expanded.get('/a').value, 'str')
+        self.assertEqual(expanded.get('/a').path, '/a')
 
-        self.assertEquals(expanded.path, '/path')
-        self.assertEquals(expanded.value['a'], node)
-        self.assertEqual(expanded.get('a/1'), node2)
+    def test_expand(self):
+        its_record = Mock(
+            spec=['input_type', 'keys', 'type_name'],
+            input_type='Record',
+            keys={
+                'a': {
+                    'default': {'type': 'obligatory'},
+                    'type': Mock(
+                        input_type='Integer')}},
+            type_name='MyRecord',
+            reducible_to_key='a')
+        its_array = Mock(
+            input_type='Array',
+            subtype=Mock(
+                input_type='Array',
+                subtype=its_record))
+        its = Mock(
+            input_type='Record',
+            keys={
+                'path': {
+                    'type': its_array
+                }
+            },
+            type_name='Root')
+
+        root = DataNode({'path': 2})
+        expanded = ac.expand(root, its)
+        print(expanded.get('/path/0/0/a').value)
+        print(root.get('/path').value)
+
+        self.assertEqual(expanded.get('/path/0/0/a').value, 2)
+
