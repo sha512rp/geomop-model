@@ -112,7 +112,7 @@ class DataNode:
             ref.value = value
 
     @property
-    def ref():
+    def ref(self):
         if self._ref == self:
             return None
         return self._ref
@@ -123,33 +123,46 @@ class DataNode:
             value = self
         self._ref = value
 
-    def __init__(self, data, parent=None, name=''):
-        self._ref = self
-        self.parent = parent
-        self.path = self._generate_path(name)
-        self._initialize_value(data)
-
-    def _generate_path(self, name):
+    @property
+    def path(self):
         try:
             path = self.parent.path
         except AttributeError:
             path = ''
-        else:
-            if not path.endswith('/'):  # ensure only single slash
-                path = path + '/'
-        return path + name
+        if not path.endswith('/'):  # ensure only single slash
+            path = path + '/'
+        return path + self.name
+
+    def __init__(self, data, parent=None, name=''):
+        self._ref = self
+        self.parent = parent
+        self.name = name
+        self._initialize_value(data)
 
     def _initialize_value(self, data):
         if isinstance(data, dict):
             self.value = {}
             for key, value in data.items():
-                self.value[key] = DataNode(value, self, key)
+                self.value[key] = self._create_child_node(value, key)
         elif isinstance(data, list):
             self.value = []
             for i, item in enumerate(data):
-                self.value.append(DataNode(item, self, str(i)))
+                self.value.append(self._create_child_node(item, str(i)))
         else:
             self.value = data
+
+    def _create_child_node(self, data, name):
+        """
+        Creates a child DataNode instance. If provided data is already
+        a DataNode, it will use the existing instance and change its
+        position in the tree by manipulating parent and name.
+        """
+        if isinstance(data, DataNode):
+            data.parent = self
+            data.name = name
+            return data
+        else:
+            return DataNode(data, self, name)
 
     def get(self, path):
         """
