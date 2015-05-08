@@ -131,7 +131,7 @@ class InputTypeSpec:
     def _parse_record(self, data):
         self.type_name = data['type_name']
         self.keys = list_to_dict(data['keys'])
-        for key in ['type_full_name', 'implements']:
+        for key in ['type_full_name', 'implements', 'reducible_to_key']:
             self.__parse_optional(data, key)
 
     def _parse_abstractrecord(self, data):
