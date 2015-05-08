@@ -1,0 +1,112 @@
+{
+  problem = {
+    TYPE = "SequentialCoupling", 
+    description = "Test13 - mixing of substances on edges and quantitative test on trivial transport problem.", 
+    mesh = {
+      mesh_file = "input/test13.msh" 
+    }, 
+
+    primary_equation = {
+      TYPE = "Steady_MH", 
+
+      input_fields= [
+        {   rid = 17,
+            anisotropy = 1.0
+        },
+        {   rid = 18,
+            anisotropy = 0.1
+        },
+        {   rid = 19,
+            anisotropy = 1.0
+        },
+        {
+          region = "IMPLICIT BOUNDARY",
+          flow_old_bcd_file = "./input/test13.fbc"
+        }
+      ],
+
+      output = {
+        output_stream = {
+          REF = "/system/output_streams/0"
+        }, 
+        output_fields = [ "pressure_p0", "pressure_p1", "velocity_p0" ]
+      }, 
+
+      balance = true,
+
+      solver = {
+        TYPE = "Petsc", 
+        a_tol = 1e-12,
+        r_tol = 1e-12
+      }
+    }, 
+
+    secondary_equation = {
+	TYPE = "SoluteTransport_DG", 
+
+    input_fields= [
+        { rid = 17,
+          init_conc = 0
+        },
+        { rid = 18,
+          init_conc = 0
+        },
+        { rid = 19,
+          init_conc = 0
+        },
+        {
+          region = "IMPLICIT BOUNDARY",
+          bc_conc = 1
+        }
+      ],
+
+      output_stream = {
+        REF = "/system/output_streams/1"
+      }, 
+      
+      substances = [
+        "A"
+      ],
+ 
+      time = {
+        REF = "../../time"
+      },
+      solver = {
+        TYPE = "Petsc", 
+        a_tol = 1e-12,
+        r_tol = 1e-12
+      },
+      balance = {
+        cumulative = true
+      }
+    },
+
+    time = {
+      end_time = 100.0, 
+      init_dt = 5.0
+    }
+  }, 
+  system = {
+    output_streams = [
+      {
+        file = "test13.pvd", 
+        format = {
+          TYPE = "vtk", 
+          variant = "ascii"
+        }, 
+        name = "flow_output_stream"
+      }, 
+      {
+        file = "transport_implicit.pvd", 
+        format = {
+          TYPE = {
+            REF = "/system/output_streams/0/format/TYPE"
+          }, 
+          variant = "ascii"
+        }, 
+        time_step = 5,
+        name = "transport_output_stream"
+      }
+    ]
+  }
+}

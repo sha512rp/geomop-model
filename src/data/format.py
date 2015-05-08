@@ -138,6 +138,19 @@ class InputTypeSpec:
         self.implementations = data['implementations']
         self.__parse_optional(data, 'default_descendant')
 
+    def __repr__(self):
+        out = self.input_type + '{'
+        if self.input_type == 'Record':
+            out = out + self.type_name
+        elif self.input_type == 'AbstractRecord':
+            out = out + self.name
+        elif self.input_type == 'Array':
+            out = out + repr(self.subtype)
+        elif self.input_type == 'Selection':
+            out = out + self.name
+
+        return out + '}'
+
 
 def list_to_dict(list_, key_label='key'):
     """

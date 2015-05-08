@@ -86,7 +86,7 @@ class TestValidator(unittest.TestCase):
             'd': Mock(value=2),
             'e': Mock(value=4)}
         self.assertEqual(self.v.validate(node), False)
-        self.assertEqual(len(self.v.errors), 2)
+        self.assertEqual(len(self.v.errors), 1)
 
     def test_validate_abstract(self):
         node = Mock(
@@ -133,7 +133,7 @@ class TestValidator(unittest.TestCase):
             its=TestValidator.its_abstract,
             path='/r')
         self.assertEqual(self.v.validate(node), False)
-        self.assertEqual(len(self.v.errors), 4)
+        self.assertEqual(len(self.v.errors), 3)
 
     def test_array(self):
         node = Mock(

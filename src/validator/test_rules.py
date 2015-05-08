@@ -140,12 +140,13 @@ class TestBasicRules(unittest.TestCase):
         self.assertEquals(rules.check_record_key({'a1': None}, 'b', its), True)
         self.assertEquals(rules.check_record_key({'a1': None}, 'c', its), True)
         self.assertEquals(rules.check_record_key({'a1': None}, 'd', its), True)
+        self.assertEqual(
+            rules.check_record_key({'unknown': None}, 'unknown', its),
+            True)
 
         with self.assertRaises(MissingKey):
             rules.check_record_key({'a1': None}, 'a2', its)
 
-        with self.assertRaises(UnknownKey):
-            rules.check_record_key({'unknown': None}, 'unknown', its)
 
         with self.assertRaises(ValidationTypeError):
             rules.check_record_key([], 'a', its);

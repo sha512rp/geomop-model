@@ -32,6 +32,7 @@ class Validator:
             its = node.its
 
         self._validate_node(node, its)
+        self._errors = reversed(self._errors)
 
         return self.valid
 
@@ -63,8 +64,10 @@ class Validator:
             self._report_error(node, error)
 
     def _validate_record(self, node, its):
-        keys = set(list(node.value.keys()) + list(its.keys.keys()))
-        for key in keys:
+        if not isinstance(node.value, dict):
+            self._report_error(node, ValidationError("Expecting type Record"))
+            return
+        for key in its.keys.keys():
             try:
                 rules.check_record_key(node.value, key, its)
             except ValidationError as error:
@@ -83,6 +86,9 @@ class Validator:
             self._validate_record(node, record_its)
 
     def _validate_array(self, node, its):
+        if not isinstance(node.value, list):
+            self._report_error(node, ValidationError("Expecting type Array"))
+            return
         try:
             rules.check_array(node.value, its)
         except ValidationError as error:
@@ -100,5 +106,11 @@ class Validator:
         """
         self.valid = False
         self._errors.append((node, error))
+
+    def console_log(self):
+        out = ('VALID' if self.valid else 'INVALID') + '\n'
+        for node, error in self._errors:
+            out = out + node.path + ': ' + str(error) + '\n'
+        return out
 
 

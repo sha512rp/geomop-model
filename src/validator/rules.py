@@ -78,8 +78,10 @@ def check_record_key(record, key, its):
     if not isinstance(record, dict):
         raise ValidationTypeError("Expecting type Record")
 
+    # if key is not found in specifications, it is considered to be valid
     if key not in its.keys and key != 'TYPE':
-        raise UnknownKey(key, its.type_name)
+        # raise UnknownKey(key, its.type_name)
+        return True
 
     try:
         key_type = its.keys[key]['default']['type']
