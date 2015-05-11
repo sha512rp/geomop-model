@@ -7,8 +7,8 @@ Tests for con data structure
 
 
 import unittest
-from geomopcontext.data.format import FormatSpec
 from geomopcontext.data.con import *
+from geomopcontext.data.format import _FormatSpec as FormatSpec
 
 
 class TestConFileHandler(unittest.TestCase):

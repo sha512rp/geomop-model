@@ -10,10 +10,10 @@ import json
 
 def parse_format(filename):
     """Return root ITS."""
-    return FormatSpec(json.load(open(filename))).its()
+    return _FormatSpec(json.load(open(filename))).its()
 
 
-class FormatSpec:
+class _FormatSpec:
     """
     Contains complete input type specification (ITS).
     """
@@ -119,7 +119,7 @@ class InputTypeSpec:
         self.__parse_range(data)
 
     def _parse_selection(self, data):
-        self.values = list_to_dict(data['values'], 'name')
+        self.values = _list_to_dict(data['values'], 'name')
 
     def _parse_filename(self, data):
         self.file_mode = data['file_mode']
@@ -130,7 +130,7 @@ class InputTypeSpec:
 
     def _parse_record(self, data):
         self.type_name = data['type_name']
-        self.keys = list_to_dict(data['keys'])
+        self.keys = _list_to_dict(data['keys'])
         for key in ['type_full_name', 'implements', 'reducible_to_key']:
             self.__parse_optional(data, key)
 
@@ -152,7 +152,7 @@ class InputTypeSpec:
         return out + '}'
 
 
-def list_to_dict(list_, key_label='key'):
+def _list_to_dict(list_, key_label='key'):
     """
     Transforms a list of dictionaries into a dictionary of dictionaries.
 

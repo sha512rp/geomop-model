@@ -10,7 +10,7 @@ from unittest.mock import Mock
 
 from geomopcontext.validator.validator import *
 from geomopcontext.validator.errors import *
-from geomopcontext.data.format import FormatSpec
+from geomopcontext.data.format import _FormatSpec as FormatSpec
 
 class TestValidator(unittest.TestCase):
 

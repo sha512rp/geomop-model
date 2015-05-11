@@ -125,6 +125,10 @@ class DataNode:
 
     @property
     def path(self):
+        """TODO issue with references:
+            if this is a reference, the original path is returned instead of
+            the actual path
+        """
         try:
             path = self.parent.path
         except AttributeError:
