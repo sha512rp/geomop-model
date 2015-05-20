@@ -77,7 +77,7 @@ def test_validation():
         validator.validate(data, its)
 
         print(filename)
-        print(validator.console_log())
+        print(validator.console_log)
         assert validator.valid == True
 
 

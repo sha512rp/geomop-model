@@ -16,6 +16,13 @@ class Validator:
     def errors(self):
         return tuple(self._errors)
 
+    @property
+    def console_log(self):
+        out = ('VALID' if self.valid else 'INVALID') + '\n'
+        for node, error in self._errors:
+            out = out + node.path + ': ' + str(error) + '\n'
+        return out
+
     def validate(self, node, its=None):
         """
         Performs data validation of node.
@@ -106,11 +113,5 @@ class Validator:
         """
         self.valid = False
         self._errors.append((node, error))
-
-    def console_log(self):
-        out = ('VALID' if self.valid else 'INVALID') + '\n'
-        for node, error in self._errors:
-            out = out + node.path + ': ' + str(error) + '\n'
-        return out
 
 
