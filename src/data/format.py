@@ -84,6 +84,11 @@ class _FormatSpec:
 
 
 class InputTypeSpec:
+    """
+    Represents type specification for a node. Depending upon the basic
+    data type, its attributes differ. The attributes of this class contain
+    the values necessary to perform a validation of the type.
+    """
     OPTIONAL_PARAMS = ['name', 'full_name', 'description']
 
     def __init__(self, data):
@@ -96,15 +101,15 @@ class InputTypeSpec:
         except AttributeError:
             pass
 
-    def __parse_range(self, data, default=[float('-inf'), float('inf')]):
+    def __parse_range(self, data, default=None):
         try:
             self.min = data['range'][0]
-        except KeyError:
-            self.min = default[0]
+        except (KeyError, TypeError):
+            self.min = float('-inf')
         try:
             self.max = data['range'][1]
-        except KeyError:
-            self.max = default[1]
+        except (KeyError, TypeError):
+            self.max = float('inf')
 
     def __parse_optional(self, data, key):
         try:
