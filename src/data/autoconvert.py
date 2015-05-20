@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Auto-correct module for GeomMop Model data
+GeoMop model auto-conversion module
+
+Ensures auto-conversion of data for specified format.
 
 @author: Tomas Krizek
 """
 
 from copy import deepcopy
 
-from geomopcontext.data.con import DataNode
+from geomop.model.data.model import DataNode
 
 
 def expand(node, its=None):
@@ -26,16 +28,18 @@ def expand(node, its=None):
         its = node.its
 
     root = deepcopy(node)  # references are kept, but duplicated
-    # try:
-    _autocorrect_crawl(root, its)
-    # except:
+
+    # TODO is try-except block needed?
+    _autoconvert_crawl(root, its)
 
     return root
 
 
-def _autocorrect_crawl(node, its):
-    # print(node.path)
-    # print(its)
+def _autoconvert_crawl(node, its):
+    """
+    Recursively crawls through the tree structure and tries to auto-convert
+    values to the expected type.
+    """
     if its.input_type == 'AbstractRecord':
         try:
             its_concrete = its.implementations[node.value['TYPE'].value]
@@ -44,11 +48,11 @@ def _autocorrect_crawl(node, its):
                 its_concrete = its.default_descendant
             except:
                 return
-        _autocorrect_crawl(node, its_concrete)
+        _autoconvert_crawl(node, its_concrete)
     elif its.input_type == 'Array':
         for i, item in enumerate(node.value):
-            node.value[i] = _get_autocorrected(item, its.subtype)
-            _autocorrect_crawl(node.value[i], its.subtype)
+            node.value[i] = _get_autoconverted(item, its.subtype)
+            _autoconvert_crawl(node.value[i], its.subtype)
     elif its.input_type == 'Record':
         for key, value in node.value.items():
             try:
@@ -56,12 +60,18 @@ def _autocorrect_crawl(node, its):
             except:
                 continue
             else:
-                node.value[key] = _get_autocorrected(value, child_its)
-                _autocorrect_crawl(node.value[key], child_its)
+                node.value[key] = _get_autoconverted(value, child_its)
+                _autoconvert_crawl(node.value[key], child_its)
     return
 
 
-def _get_autocorrected(node, its):
+def _get_autoconverted(node, its):
+    """
+    Auto-conversion of array and record types.
+
+    Arrays are expanded to the expected dimension.
+    Records are initialized from the reducible_to_key value.
+    """
     if its.input_type == 'Array' and not isinstance(node.value, list):
         dim = _get_expected_array_dimension(its)
         return _expand_value_to_array(node, dim)
@@ -72,6 +82,7 @@ def _get_autocorrected(node, its):
 
 
 def _get_expected_array_dimension(its):
+    """Returns the expected dimension of the input array."""
     dim = 0
     while its.input_type == 'Array':
         dim = dim + 1
@@ -89,6 +100,7 @@ def _expand_value_to_array(node, dim):
 
 
 def _expand_reducible_to_key(node, its):
+    """Initializes a record from the reducible_to_key value."""
     try:
         key = its.default_descendant.reducible_to_key
     except AttributeError:
@@ -97,17 +109,3 @@ def _expand_reducible_to_key(node, its):
     value = {}
     value[key] = node.value
     return DataNode(value, node.parent, node.name)
-
-
-def _is_reducible_to_key(node, its):
-    try:  # is Record reducible to key?
-        its.reducible_to_key
-    except AttributeError:
-        try:
-            its.default_descendant.reducible_to_key
-        except AttributeError:
-            return False
-        else:
-            return True
-    else:
-        return True

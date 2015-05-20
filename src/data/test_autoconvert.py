@@ -7,11 +7,12 @@ Tests for auto-correct module
 
 import unittest
 from unittest.mock import Mock
-import geomopcontext.data.autocorrect as ac
-from geomopcontext.data.con import DataNode
+
+import geomop.model.data.autoconvert as ac
+from geomop.model.data.model import DataNode
 
 
-class TestAutoCorrect(unittest.TestCase):
+class Testautoconvert(unittest.TestCase):
     def test_get_expected_array_dimension(self):
         its = Mock(
             input_type='Array',
@@ -29,7 +30,6 @@ class TestAutoCorrect(unittest.TestCase):
         class MyMock(object):
             pass
 
-
         node = MyMock()
         node.value = MyMock()
         node.parent = MyMock()
@@ -42,7 +42,7 @@ class TestAutoCorrect(unittest.TestCase):
         self.assertIsInstance(expanded.value[0].value, list)
         self.assertIsInstance(expanded.value[0].value[0].value, list)
         self.assertEquals(expanded.value[0].value[0].value[0].value, node.value)
-        self.assertEquals(expanded.value[0].value[0].value[0].path,
+        self.assertEquals(expanded.value[0].value[0].value[0].path, \
             '/path/key/0/0/0')
 
         self.assertEquals(
