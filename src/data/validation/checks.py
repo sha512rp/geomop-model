@@ -5,7 +5,7 @@ Basic rules for data validation
 @author: Tomas Krizek
 """
 
-from geomopcontext.validator.errors import *
+from .errors import *
 
 
 def check_integer(value, its):

@@ -5,9 +5,8 @@ Tests for parser module.
 @author: Tomas Krizek
 """
 
-
 import unittest
-import geomop.model.data.parser as parser
+from . import parser
 
 
 class TestConFileHandler(unittest.TestCase):

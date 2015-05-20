@@ -6,9 +6,10 @@ Tests for format package.
 """
 
 import unittest
-from geomop.model.data.format import *
-from geomop.model.data.format import _list_to_dict as list_to_dict
-from geomop.model.data.format import _FormatSpec as FormatSpec
+
+from .format import *
+from .format import _list_to_dict as list_to_dict
+from .format import _FormatSpec as FormatSpec
 
 
 class TestFormatSpec(unittest.TestCase):

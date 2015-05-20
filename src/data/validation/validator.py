@@ -5,8 +5,8 @@ Validator for Flow123D CON files
 @author: Tomas Krizek
 """
 
-from geomopcontext.validator.errors import *
-import geomopcontext.validator.rules as rules
+from .errors import *
+from . import checks
 
 
 class Validator:
@@ -66,7 +66,7 @@ class Validator:
 
     def _validate_scalar(self, node, its):
         try:
-            getattr(rules, 'check_%s' % its.input_type.lower())(node.value, its)
+            getattr(checks, 'check_%s' % its.input_type.lower())(node.value, its)
         except ValidationError as error:
             self._report_error(node, error)
 
@@ -76,7 +76,7 @@ class Validator:
             return
         for key in its.keys.keys():
             try:
-                rules.check_record_key(node.value, key, its)
+                checks.check_record_key(node.value, key, its)
             except ValidationError as error:
                 self._report_error(node, error)
                 if isinstance(error, UnknownKey):
@@ -86,7 +86,7 @@ class Validator:
 
     def _validate_abstract(self, node, its):
         try:
-            record_its = rules.get_abstractrecord_type(node.value, its)
+            record_its = checks.get_abstractrecord_type(node.value, its)
         except ValidationError as error:
             self._report_error(node, error)
         else:
@@ -97,7 +97,7 @@ class Validator:
             self._report_error(node, ValidationError("Expecting type Array"))
             return
         try:
-            rules.check_array(node.value, its)
+            checks.check_array(node.value, its)
         except ValidationError as error:
             self._report_error(node, error)
         for item in node.value:

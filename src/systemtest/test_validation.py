@@ -5,14 +5,16 @@ Integration tests for validation
 @author: Tomas Krizek
 """
 
-from geomopcontext.data.format import parse_format
-from geomopcontext.data.con import parse_con
-from geomopcontext.data.autocorrect import expand
-from geomopcontext.validator.validator import Validator
+from geomop.model.data import parse_format
+from geomop.model.data import parse_con
+from geomop.model.data import autoconvert
+from geomop.model.data import Validator
 
 
 def test_validation():
-    input_dir = 'data/con'
+    input_dir = 'systemtest/data/con'
+    import os
+    print(os.getcwd())
     valid_files = [
         'dual_por_sorp.con',
         'compatible.con',
@@ -67,12 +69,12 @@ def test_validation():
         'test_20.con',
         'trans_explicit.con',
     ]
-    its = parse_format('data/format/1.8.2.json')
+    its = parse_format('systemtest/data/format/1.8.2.json')
     validator = Validator()
 
     for filename in valid_files:
         data = parse_con(input_dir + '/' + filename)
-        data = expand(data, its)
+        data = autoconvert(data, its)
 
         validator.validate(data, its)
 

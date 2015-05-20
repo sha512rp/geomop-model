@@ -8,8 +8,8 @@ Tests for auto-correct module
 import unittest
 from unittest.mock import Mock
 
-import geomop.model.data.autoconvert as ac
-from geomop.model.data.model import DataNode
+from . import autoconverter as ac
+from .model import DataNode
 
 
 class Testautoconvert(unittest.TestCase):
@@ -91,7 +91,7 @@ class Testautoconvert(unittest.TestCase):
         self.assertEqual(expanded.get('/a').value, 'str')
         self.assertEqual(expanded.get('/a').path, '/a')
 
-    def test_expand(self):
+    def test_autoconvert(self):
         its_record = Mock(
             spec=['input_type', 'keys', 'type_name'],
             input_type='Record',
@@ -117,9 +117,9 @@ class Testautoconvert(unittest.TestCase):
             type_name='Root')
 
         root = DataNode({'path': 2})
-        expanded = ac.expand(root, its)
-        print(expanded.get('/path/0/0/a').value)
+        converted = ac.autoconvert(root, its)
+        print(converted.get('/path/0/0/a').value)
         print(root.get('/path').value)
 
-        self.assertEqual(expanded.get('/path/0/0/a').value, 2)
+        self.assertEqual(converted.get('/path/0/0/a').value, 2)
 

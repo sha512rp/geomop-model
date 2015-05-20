@@ -5,10 +5,9 @@ Tests for model data structure.
 @author: Tomas Krizek
 """
 
-
 import unittest
 
-from geomop.model.data.model import *
+from .model import *
 
 
 class TestDataNode(unittest.TestCase):

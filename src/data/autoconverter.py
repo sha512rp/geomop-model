@@ -9,10 +9,10 @@ Ensures auto-conversion of data for specified format.
 
 from copy import deepcopy
 
-from geomop.model.data.model import DataNode
+from .model import DataNode
 
 
-def expand(node, its=None):
+def autoconvert(node, its=None):
     """
     Performs recursive auto-correction on root node.
 

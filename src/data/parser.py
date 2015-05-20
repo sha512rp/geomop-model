@@ -10,12 +10,11 @@ Future support for .yaml files for Flow123d v2 is planned.
 @author: Tomas Krizek
 """
 
-
 import demjson
 import re
 from copy import copy
 
-from geomop.model.data.model import DataNode, RefError
+from .model import DataNode, RefError
 
 
 def parse_con(filename):

@@ -8,9 +8,10 @@ Tests for validator
 import unittest
 from unittest.mock import Mock
 
-from geomopcontext.validator.validator import *
-from geomopcontext.validator.errors import *
-from geomopcontext.data.format import _FormatSpec as FormatSpec
+from .validator import *
+from .errors import *
+from ..format import _FormatSpec as FormatSpec
+
 
 class TestValidator(unittest.TestCase):
 
