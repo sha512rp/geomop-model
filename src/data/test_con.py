@@ -37,7 +37,7 @@ class TestConFileHandler(unittest.TestCase):
         }
 
         root = ConFileHandler._parse_json(raw)
-        with self.assertRaises(ReferenceError):
+        with self.assertRaises(RefError):
             root.get('/a').value
 
     def test_reference_error(self):
@@ -47,7 +47,7 @@ class TestConFileHandler(unittest.TestCase):
             'c': {'REF': '/a'}
         }
 
-        with self.assertRaises(ReferenceError):
+        with self.assertRaises(RefError):
             root = ConFileHandler._parse_json(raw)
             
     def test_parse_json(self):

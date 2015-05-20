@@ -6,8 +6,6 @@ GeomMop Model data structure
 """
 
 
-import demjson
-import re
 import pprint
 from copy import copy
 
@@ -42,7 +40,7 @@ class ConFileHandler:
                 else: del refs[path]
             if length == len(refs):
                 # no reference removed -> impossible to resolve references
-                raise ReferenceError("Can not resolve references.")
+                raise RefError("Can not resolve references.")
         return root
 
     @staticmethod
@@ -86,7 +84,7 @@ class DataNode:
             try:
                 return fn(*args, **kwargs)
             except RuntimeError:
-                raise ReferenceError("Circular reference detected!")
+                raise RefError("Circular reference detected!")
         return inner
 
     @property
@@ -202,7 +200,7 @@ class DataNode:
             else '') + ')'
 
 
-class ReferenceError(Exception):
+class RefError(Exception):
     def __init__(self, message):
-        super(ReferenceError, self).__init__(message)
+        super(RefError, self).__init__(message)
 
