@@ -67,4 +67,18 @@ class TestModel(unittest.TestCase):
         children = model.children(problem_node, '/problem/0')
         self.assertEqual(children, expected)
 
-
+    def test_set(self):
+        root_node = {
+            'a': {
+                'b': [
+                    {
+                    'c': 2
+                    },
+                    {
+                    'c': 3
+                    }
+                ]
+            }
+        }
+        model.set(root_node, '/a/b/0', {'d': 4})
+        self.assertEqual(model.get(root_node, '/a/b/0/d'), 4)

@@ -65,6 +65,18 @@ def get(node, path):
     return get_by_keys(node, keys)
 
 
+def set(node, path, value):
+    """
+    Sets a child node at the specified path to the given value.
+    """
+    keys = list(path_to_keys(path))
+    if keys is None or not keys:
+        raise Exception("Invalid path!")
+
+    key_to_set = keys.pop()
+    get_by_keys(node, keys)[key_to_set] = value
+
+
 def get_by_keys(node, keys):
     """
     Retrives node using the specified keys.
