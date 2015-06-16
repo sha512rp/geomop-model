@@ -13,6 +13,8 @@ has a path that indicates its position in the tree.
 @author: Tomas Krizek
 """
 
+from copy import copy
+
 
 def path_to_keys(path):
     """
@@ -20,6 +22,7 @@ def path_to_keys(path):
     resolves .. and .
     e.g.: '/path/to/not_this/../but_this/./1'
     would return ('path', 'to', 'but_this', 1)
+    Returns None if path can not be resolved.
     """
     keys = []
     for key in path.split('/'):
@@ -28,7 +31,7 @@ def path_to_keys(path):
         elif key == '..':
             # move up -> remove parent
             if not keys:
-                raise Exception('Invalid path: ' + str(path))
+                return None  # cannot move up, unable to resolve
             keys.pop()
         else:
             try:  # convert to integer if possible
@@ -40,15 +43,25 @@ def path_to_keys(path):
     return tuple(keys)
 
 
+def keys_to_path(keys, absolute=True):
+    """
+    Translate keys to a string representation of path.
+    """
+    if keys is None:
+        return None
+
+    path = '/'.join([str(key) for key in keys])
+    if absolute:  # add leading slash
+        path = '/' + path
+    return path
+
+
 def get(node, path):
     """
     Retrieves node at the specified path.
     If the path does not exist, returns None.
     """
-    try:
-        keys = path_to_keys(path)
-    except Exception:
-        return None
+    keys = path_to_keys(path)
     return get_by_keys(node, keys)
 
 
@@ -58,6 +71,9 @@ def get_by_keys(node, keys):
     If the path does not exist, returns None.
     """
     value = node
+    if keys is None:
+        raise Exception('Invalid path!')
+
     for key in keys:
         if isinstance(value, dict):
             value = value.get(key, None)
@@ -74,11 +90,26 @@ def get_by_keys(node, keys):
     return value
 
 
-def children(node):
+def children(node, path='/'):
     """
     Returns children of this node.
-
-    dict for Record,
-    list for Array
+    Provide path to this node to generate correct absolute paths.
+    Output dictionary contains paths and nodes.
     """
-    pass
+    keys = path_to_keys(path)
+
+    def parse_children(data):
+        children = {}
+        for key, node in data:
+            child_keys = list(keys)
+            child_keys.append(key)
+            child_path = keys_to_path(child_keys)
+            children[child_path] = node
+        return children
+
+    if isinstance(node, dict):
+        return parse_children(node.items())
+    elif isinstance(node, list):
+        return parse_children(enumerate(node))
+    else:
+        return {}

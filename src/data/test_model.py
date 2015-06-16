@@ -17,9 +17,7 @@ class TestModel(unittest.TestCase):
         expected = ('path', 'to', 'but_this', 1)
         keys = model.path_to_keys(path)
         self.assertSequenceEqual(keys, expected)
-
-        with self.assertRaises(Exception):
-            model.path_to_keys('/..')
+        self.assertIsNone(model.path_to_keys('/..'))
 
 
     def test_get(self):
@@ -49,3 +47,24 @@ class TestModel(unittest.TestCase):
         root_node = {'problem': [True]}
         self.assertEqual(model.get_by_keys(root_node, ['problem', 0]), True)
         self.assertEqual(model.get_by_keys(root_node, ['problem', '0']), True)
+
+    def test_keys_to_path(self):
+        keys = ('problem', 0)
+        self.assertEqual(model.keys_to_path(keys), '/problem/0')
+
+    def test_children(self):
+        problem_node = {
+                'one': 1,
+                2: True,
+                'three': 'abc'
+            }
+        expected = {
+            '/problem/0/one': 1,
+            '/problem/0/2': True,
+            '/problem/0/three': 'abc'
+        }
+
+        children = model.children(problem_node, '/problem/0')
+        self.assertEqual(children, expected)
+
+
