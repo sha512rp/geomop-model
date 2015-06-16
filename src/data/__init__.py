@@ -1,4 +1,4 @@
-from .model import DataNode, RefError
+from . import model
 from .parser import parse_con
 from .format import parse_format
 from .validation import Validator, ValidationError

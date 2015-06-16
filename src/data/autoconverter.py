@@ -9,10 +9,10 @@ Ensures auto-conversion of data for specified format.
 
 from copy import deepcopy
 
-from .model import DataNode
+from . import model
 
 
-def autoconvert(node, its=None):
+def autoconvert(node, its, path ='/'):
     """
     Performs recursive auto-correction on root node.
 
@@ -24,9 +24,6 @@ def autoconvert(node, its=None):
         3. If AbstractRecord is expected and scalar/array is found, check if
            default_descendant fits rule 2.
     """
-    if its is None:
-        its = node.its
-
     root = deepcopy(node)  # references are kept, but duplicated
 
     # TODO is try-except block needed?
@@ -35,22 +32,24 @@ def autoconvert(node, its=None):
     return root
 
 
-def _autoconvert_crawl(node, its):
+def _autoconvert_crawl(node, its, path):
     """
     Recursively crawls through the tree structure and tries to auto-convert
     values to the expected type.
     """
     if its.input_type == 'AbstractRecord':
         try:
-            its_concrete = its.implementations[node.value['TYPE'].value]
+            its_concrete = its.implementations[node['TYPE']]
         except:
             try:
                 its_concrete = its.default_descendant
             except:
                 return
-        _autoconvert_crawl(node, its_concrete)
+        _autoconvert_crawl(node, its_concrete, path)
     elif its.input_type == 'Array':
-        for i, item in enumerate(node.value):
+        for child_path, child_node in model.children(node, path):
+            autoconverted_node = _autoconvert_node(child_node, its.subtype)
+            model.set(node, child_path, autoconverted_node)
             node.value[i] = _get_autoconverted(item, its.subtype)
             _autoconvert_crawl(node.value[i], its.subtype)
     elif its.input_type == 'Record':
@@ -65,7 +64,7 @@ def _autoconvert_crawl(node, its):
     return
 
 
-def _get_autoconverted(node, its):
+def _autoconvert_node(node, its):
     """
     Auto-conversion of array and record types.
 
@@ -92,11 +91,10 @@ def _get_expected_array_dimension(its):
 
 def _expand_value_to_array(node, dim):
     """Expands node value to specified dimension."""
-    value = node.value
     while dim > 0:
-        value = [value]
+        node = [node]
         dim = dim - 1
-    return DataNode(value, node.parent, node.name)
+    return node
 
 
 def _expand_reducible_to_key(node, its):
@@ -107,5 +105,5 @@ def _expand_reducible_to_key(node, its):
         key = its.reducible_to_key
 
     value = {}
-    value[key] = node.value
-    return DataNode(value, node.parent, node.name)
+    value[key] = node
+    return value

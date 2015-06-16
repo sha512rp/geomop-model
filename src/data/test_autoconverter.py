@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import Mock
 
 from . import autoconverter as ac
-from .model import DataNode
+from . import model
 
 
 class Testautoconvert(unittest.TestCase):
