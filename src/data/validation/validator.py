@@ -18,9 +18,9 @@ class Validator:
 
     @property
     def console_log(self):
-        out = ('VALID' if self.valid else 'INVALID') + '\n'
+        out = ('VALID' if self.valid else 'INVALID')
         for node, error in self._errors:
-            out = out + node.path + ': ' + str(error) + '\n'
+            out = out + '\n' + node.path + ': ' + str(error)
         return out
 
     def validate(self, node, its=None):
