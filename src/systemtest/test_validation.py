@@ -5,10 +5,10 @@ Integration tests for validation
 @author: Tomas Krizek
 """
 
-from geomop.model.data import parse_format
-from geomop.model.data import parse_con
-from geomop.model.data import autoconvert
-from geomop.model.data import Validator
+from data import parse_format
+from data import parse_con
+from data import autoconvert
+from data import Validator
 
 
 def test_validation():
