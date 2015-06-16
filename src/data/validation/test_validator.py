@@ -11,6 +11,7 @@ from unittest.mock import Mock
 from .validator import *
 from .errors import *
 from ..format import _FormatSpec as FormatSpec
+from ..model import DataNode
 
 
 class TestValidator(unittest.TestCase):
@@ -63,10 +64,8 @@ class TestValidator(unittest.TestCase):
         self.v = Validator()
 
     def test_validate_scalar(self):
-        node = Mock(
-            its=TestValidator.its_int,
-            value=2,
-            path='/problem/1/number')
+        node = DataNode(2, None, '/problem/1')
+        node.its = TestValidator.its_int
         self.assertEqual(self.v.validate(node), True)
 
         node.value = 4
@@ -74,30 +73,18 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(len(self.v.errors), 1)
 
     def test_validate_record(self):
-        node = Mock(
-            its=TestValidator.its_record, 
-            value={
-                'a1': Mock(value=1),
-                'a2': Mock(value=1)},
-            path='/record')
+        node = DataNode({'a1': 1, 'a2': 1})
+        node.its = TestValidator.its_record
         self.assertEqual(self.v.validate(node), True)
-
-        node.value = {
-            'a1': Mock(value=1),
-            'd': Mock(value=2),
-            'e': Mock(value=4)}
+        
+        node = DataNode({'a1': 1, 'd': 2, 'e': 4})
+        node.its = TestValidator.its_record
         self.assertEqual(self.v.validate(node), False)
         self.assertEqual(len(self.v.errors), 1)
 
     def test_validate_abstract(self):
-        node = Mock(
-            spec=['its', 'value', 'path'],
-            its=TestValidator.its_abstract,
-            value={
-                'a1': Mock(value=1),
-                'a2': Mock(value=1),
-                'TYPE': Mock(value='record1')},
-            path='/abstract')
+        node = DataNode({'a1': 1, 'a2': 1, 'TYPE': 'record1'})
+        node.its = TestValidator.its_abstract
         self.assertEqual(self.v.validate(node), True)
 
         node.value['TYPE'].value = 'record2'
@@ -107,48 +94,26 @@ class TestValidator(unittest.TestCase):
         self.assertEqual(self.v.validate(node), False)
 
     def test_validate(self):
-        node = Mock(
-            value={
-                'TYPE': Mock(value='record1', path='/r/TYPE'),
-                'a1': Mock(value=2, path='/r/a1'),
-                'a2': Mock(value=1, path='/r/a2')},
-            its=TestValidator.its_abstract,
-            path='/r')
+        node = DataNode({'TYPE': 'record1', 'a1': 2, 'a2': 1})
+        node.its=TestValidator.its_abstract
         self.assertEqual(self.v.validate(node), True)
 
-        node = Mock(
-            value={
-                'TYPE': Mock(value='record2', path='/r/TYPE'),
-                'b': Mock(value=2, path='/r/b')},
-            its=TestValidator.its_abstract,
-            path='/r')
+        node = DataNode({'TYPE': 'record2', 'b': 2})
+        node.its = TestValidator.its_abstract
         self.assertEqual(self.v.validate(node), True)
 
-        node = Mock(
-            value={
-                'TYPE': Mock(value='record1', path='/r/TYPE'), 
-                'a1': Mock(value=5, path='/r/a1'), 
-                'a2': Mock(value=-1, path='/r/a2'), 
-                'e': Mock(value=4, path='/r/e'),
-                'b': Mock(value='r', path='/r/b')},
-            its=TestValidator.its_abstract,
-            path='/r')
+        node = DataNode({'TYPE': 'record1', 'a1': 5, 'a2': -1, 'e': 4, 'b': 'r'})
+        node.its = TestValidator.its_abstract
         self.assertEqual(self.v.validate(node), False)
         self.assertEqual(len(self.v.errors), 3)
 
     def test_array(self):
-        node = Mock(
-            value=[
-                Mock(value=0),
-                Mock(value=1),
-                Mock(value=1),
-                Mock(value=3)],
-            its=TestValidator.its_array)
+        node = DataNode([0, 1, 1, 3])
+        node.its = TestValidator.its_array
         self.assertEqual(self.v.validate(node), True)
 
-        node.value.append(Mock(value=-1))
-        node.value.append(Mock(value=5))
-
+        node = DataNode([0, 1, 1, 3,-1, 5])
+        node.its = TestValidator.its_array
         self.assertEqual(self.v.validate(node), False)
         self.assertEqual(len(self.v.errors), 3)
 

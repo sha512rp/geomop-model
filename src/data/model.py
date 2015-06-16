@@ -31,6 +31,16 @@ class DataNode:
     The complete tree is represented by its root node.
     """
 
+    def __init__(self, data, parent=None, name=''):
+        """
+        Recursively constructs the tree structure from data.
+
+        parent and name parameters are to be ommitted for the root node.
+        """
+        self._ref = self
+        self.parent = parent
+        self.name = name
+        self._initialize_value(data)
 
     @property
     @_circular_check
@@ -95,17 +105,6 @@ class DataNode:
         if not path.endswith('/'):  # ensure only single slash
             path = path + '/'
         return path + self.name
-
-    def __init__(self, data, parent=None, name=''):
-        """
-        Recursively constructs the tree structure from data.
-
-        parent and name parameters are to be ommitted for the root node.
-        """
-        self._ref = self
-        self.parent = parent
-        self.name = name
-        self._initialize_value(data)
 
     def _initialize_value(self, data):
         """Ensures the creation of child nodes for dicts and lists."""
