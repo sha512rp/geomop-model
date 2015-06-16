@@ -6,12 +6,14 @@ Tests for parser module.
 """
 
 import unittest
+
 from . import parser
+from . import model
 
 
 class TestConFileHandler(unittest.TestCase):
     def test_references(self):
-        raw = {
+        data = {
             'a': {'x': 0, 'y': {'REF': '/b/y'}},
             'b': {'REF': '/d'},
             'c': [
@@ -20,36 +22,26 @@ class TestConFileHandler(unittest.TestCase):
             ],
             'd': {'x': 3, 'y': 5}
         }
-        refs = parser._extract_references(raw)
+
+        refs = parser._extract_references(data)
 
         self.assertEqual(refs['/a/y'], '/b/y')
         self.assertEqual(refs['/b'], '/d')
         self.assertEqual(refs['/c/0'], '/b/x')
         self.assertEqual(refs['/c/1'], '/a/y')
 
-    def test_circular_reference(self):
-        raw = {
-            'a': {'REF': '/b'},
-            'b': {'REF': '/c'},
-            'c': {'REF': '/a'}
-        }
-
-        root = parser._resolve_references(raw)
-        with self.assertRaises(parser.RefError):
-            root.get('/a').value
-
     def test_reference_error(self):
-        raw = {
+        data = {
             'a': {'REF': '/b/x'},
             'b': {'REF': '/c'},
             'c': {'REF': '/a'}
         }
 
-        with self.assertRaises(parser.RefError):
-            parser._resolve_references(raw)
+        with self.assertRaises(Exception):
+            parser._resolve_references(data)
 
     def test_parse_json(self):
-        raw = {
+        data = {
             'a': {'x': 0, 'y': {'REF': '/b/y'}},
             'b': {'REF': '/d'},
             'c': [
@@ -59,32 +51,32 @@ class TestConFileHandler(unittest.TestCase):
             'd': {'x': 3, 'y': 5},
             'e': {'REF': '/c'}
         }
-        root = parser._resolve_references(raw)
+        parser._resolve_references(data)
 
-        self.assertEqual(root.get('/a/x').value, 0)
-        self.assertEqual(root.get('/a/y').value, 5)
-        self.assertEqual(root.get('/b/x').value, 3)
-        self.assertEqual(root.get('/b/y').value, 5)
-        self.assertEqual(root.get('/c/0').value, 3)
-        self.assertEqual(root.get('/c/1').value, 5)
-        self.assertEqual(root.get('/d/x').value, 3)
-        self.assertEqual(root.get('/d/y').value, 5)
-        self.assertEqual(root.get('/e/0').value, 3)
-        self.assertEqual(root.get('/e/1').value, 5)
+        self.assertEqual(model.get(data, '/a/x'), 0)
+        self.assertEqual(model.get(data, '/a/y'), 5)
+        self.assertEqual(model.get(data, '/b/x'), 3)
+        self.assertEqual(model.get(data, '/b/y'), 5)
+        self.assertEqual(model.get(data, '/c/0'), 3)
+        self.assertEqual(model.get(data, '/c/1'), 5)
+        self.assertEqual(model.get(data, '/d/x'), 3)
+        self.assertEqual(model.get(data, '/d/y'), 5)
+        self.assertEqual(model.get(data, '/e/0'), 3)
+        self.assertEqual(model.get(data, '/e/1'), 5)
 
         # test references
-        self.assertEqual(root.get('/a/y').value, root.get('/d/y').value)
-        self.assertEqual(root.get('/b').value, root.get('/d').value)
-        self.assertEqual(root.get('/c/0').value, root.get('/d/x').value)
-        self.assertEqual(root.get('/c/1').value, root.get('/d/y').value)
-        self.assertEqual(root.get('/e').value, root.get('/c').value)
+        self.assertIs(model.get(data, '/a/y'), model.get(data, '/d/y'))
+        self.assertIs(model.get(data, '/b'), model.get(data, '/d'))
+        self.assertIs(model.get(data, '/c/0'), model.get(data, '/d/x'))
+        self.assertIs(model.get(data, '/c/1'), model.get(data, '/d/y'))
+        self.assertIs(model.get(data, '/e'), model.get(data, '/c'))
 
     def test_relative_reference(self):
-        raw = {
+        data = {
             'a': {'x': 0, 'y': {'REF': '../../b'}},
             'b': 2,
         }
-        root = parser._resolve_references(raw)
+        parser._resolve_references(data)
 
-        self.assertEqual(root.get('/a/y')._ref, root.get('/b')._ref)
+        self.assertIs(model.get(data, '/a/y'), model.get(data, '/b'))
 

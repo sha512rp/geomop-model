@@ -25,7 +25,7 @@ def path_to_keys(path):
     Returns None if path can not be resolved.
     """
     keys = []
-    for key in path.split('/'):
+    for key in str(path).split('/'):
         if not key or key == '.':
             continue
         elif key == '..':
@@ -40,7 +40,7 @@ def path_to_keys(path):
                 pass
             keys.append(key)
 
-    return tuple(keys)
+    return keys
 
 
 def keys_to_path(keys, absolute=True):
@@ -69,7 +69,7 @@ def set(node, path, value):
     """
     Sets a child node at the specified path to the given value.
     """
-    keys = list(path_to_keys(path))
+    keys = path_to_keys(path)
     if keys is None or not keys:
         raise Exception("Invalid path!")
 

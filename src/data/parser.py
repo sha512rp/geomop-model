@@ -14,7 +14,7 @@ import demjson
 import re
 from copy import copy
 
-from .model import DataNode, RefError
+from . import model
 
 
 def parse_con(filename):
@@ -27,7 +27,8 @@ def parse_con(filename):
     """
     con = open(filename).read()
     data = _decode_con(con)
-    return _resolve_references(data)
+    _resolve_references(data)
+    return data
 
 
 def _resolve_references(data):
@@ -36,23 +37,20 @@ def _resolve_references(data):
     references.
     """
     refs = _extract_references(data)
-    root = DataNode(data)
+
     while len(refs) > 0:
         length = len(refs)
         for path, ref_path in copy(refs).items():
-            try:
-                node = root.get(path)
-                if ref_path.startswith('/'):  # absolute ref
-                    node.ref = root.get(ref_path)
-                else:  # relative ref
-                    node.ref = node.get(ref_path)
-            except LookupError:
+            if not ref_path.startswith('/'):  # relative path
+                ref_path = path + '/' + ref_path
+            referred_to = model.get(data, ref_path)
+            if referred_to is None:
                 continue
-            else: del refs[path]
+            model.set(data, path, referred_to)
+            del refs[path]
         if length == len(refs):
             # no reference removed -> impossible to resolve references
-            raise RefError("Can not resolve references.")
-    return root
+            raise Exception("Can not resolve references.")
 
 
 def _decode_con(con):
@@ -62,29 +60,29 @@ def _decode_con(con):
     return demjson.decode(con)
 
 
-def _extract_references(json):
+def _extract_references(data):
     """
     Crawl through the data and find all REF keys.
 
     Returns a dictionary of their locations and where they point.
     """
-    def crawl(data, path):
-        if isinstance(data, dict):
-            try:
-                ref_path = data['REF']
-            except KeyError:
-                pass
-            else:
-                refs[path] = ref_path
-                del data['REF']
-            # crawl for all keys
-            for key, value in data.items():
-                crawl(value, path + '/' + key)
-        elif isinstance(data, list):
-            # crawl for all records
-            for i, item in enumerate(data):
-                crawl(item, path + '/' + str(i))
+    def find_reference(node, path='/'):
+        try:  # is there a REF in this node?
+            ref_path = node['REF']
+        except Exception:
+            pass
+        else:  # extract reference
+            refs[path] = ref_path
+            return True
+
+        # call for all children
+        for child_path, child_node in model.children(node, path).items():
+            if find_reference(child_node, child_path):
+                # set the node to None
+                model.set(node, model.path_to_keys(child_path).pop(), None)
+
+        return False
 
     refs = {}
-    crawl(json, '')
+    find_reference(data)
     return refs
