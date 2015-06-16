@@ -1,0 +1,7 @@
+- valid
+- errors in example
+    - 17: bc_type (selection)
+    - 26: output_fields (autoconversion, selection)
+    - 29: balance_on (type)
+    - 32: TYPE (abstract)
+    - 73: scheme_tolerance (double_min)
