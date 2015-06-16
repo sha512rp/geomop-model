@@ -30,7 +30,7 @@ class ValueTooBig(ValidationError):
 
 class InvalidOption(ValidationError):
     def __init__(self, option, selection_name):
-        message = "Option '" + option + "' does not exist in selection " + \
+        message = "Option '" + str(option) + "' does not exist in selection " + \
                 selection_name
         super(InvalidOption, self).__init__(message)
 
@@ -49,15 +49,15 @@ class TooManyItems(ValidationError):
 
 class UnknownKey(ValidationError):
     def __init__(self, key, record_name):
-        message = "Unknown key '" + key + "' in record " + \
-                record_name
+        message = "Unknown key '" + str(key) + "' in record " + \
+                str(record_name)
         super(UnknownKey, self).__init__(message)
 
 
 class MissingKey(ValidationError):
     def __init__(self, key, record_name):
-        message = "Missing obligatory key '" + key + "' in record " + \
-                record_name
+        message = "Missing obligatory key '" + str(key) + "' in record " + \
+                str(record_name)
         super(MissingKey, self).__init__(message)
 
 
@@ -69,7 +69,7 @@ class MissingAbstractRecordType(ValidationError):
 
 class InvalidAbstractRecordType(ValidationError):
     def __init__(self, type_name, abstract_name):
-        message = "Invalid TYPE '" + type_name + "' for " + abstract_name
+        message = "Invalid TYPE '" + str(type_name) + "' for " + str(abstract_name)
         super(InvalidAbstractRecordType, self).__init__(message)
 
 
