@@ -141,8 +141,7 @@ class DataNode:
         if path.startswith(self.path):  # absolute path
             path = path[len(self.path):]
         elif path.startswith('/'):  # absolute path with different location
-            raise LookupError("Can't resolve '" + path + \
-                "' from node " + self.path)
+            raise LookupError("Can't resolve {path} from node {location}".format(path=path, location=self.path))
         node = self
         for key in path.split('/'):
             if not key or key == '.':
@@ -157,14 +156,12 @@ class DataNode:
             try:
                 node = node.value[key]
             except LookupError:
-                raise LookupError("Node '" + \
-                    str(key) + "' does not exist in " + node.path)
+                raise LookupError("Node {key} does not exist in {location}".format(key=key, location=node.path))
         return node
 
     def __repr__(self):
-        return 'DataNode(' + self.path + \
-            ((' (ref ' + str(self._ref) + ')') if self._ref != self \
-            else '') + ')'
+        ref_text = ' (ref {reference})'.format(reference=self._ref) if self._ref != self else ''
+        return 'DataNode({location}{ref_text})'.format(location=self.path, ref_text=ref_text)
 
 
 class RefError(Exception):

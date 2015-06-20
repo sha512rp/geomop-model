@@ -62,8 +62,7 @@ class Validator:
         elif its.input_type == 'Array':
             self._validate_array(path, its)
         else:
-            raise Exception("Format error: Unknown input_type '"
-                + its.input_type + "'")
+            raise Exception("Format error: Unknown input_type {input_type})".format(input_type=its.input_type))
 
     def _validate_scalar(self, path, its):
         node = self.root_node.get(path)

@@ -97,7 +97,7 @@ class InputTypeSpec:
         for param in InputTypeSpec.OPTIONAL_PARAMS:
             self.__parse_optional(data, param)
         try:        # parse extra parameters based on input_type
-            getattr(self, '_parse_%s' % self.input_type.lower())(data)
+            getattr(self, '_parse_{input_type}'.format(input_type=self.input_type.lower()))(data)
         except AttributeError:
             pass
 

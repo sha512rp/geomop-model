@@ -79,11 +79,11 @@ def _extract_references(json):
                 del data['REF']
             # crawl for all keys
             for key, value in data.items():
-                crawl(value, path + '/' + key)
+                crawl(value, '{path}/{key}'.format(path=path, key=key))
         elif isinstance(data, list):
             # crawl for all records
             for i, item in enumerate(data):
-                crawl(item, path + '/' + str(i))
+                crawl(item, '{path}/{key}'.format(path=path, key=i))
 
     refs = {}
     crawl(json, '')
