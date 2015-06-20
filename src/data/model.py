@@ -108,6 +108,7 @@ class DataNode:
 
     def _initialize_value(self, data):
         """Ensures the creation of child nodes for dicts and lists."""
+        # TODO split value and children
         if isinstance(data, dict):
             self.value = {}
             for key, value in data.items():
