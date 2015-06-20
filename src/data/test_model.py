@@ -7,7 +7,7 @@ Tests for model data structure.
 
 import unittest
 
-from .model import *
+from .model import DataNode
 
 
 class TestDataNode(unittest.TestCase):

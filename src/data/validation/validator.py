@@ -5,8 +5,7 @@ Validator for Flow123D CON files
 @author: Tomas Krizek
 """
 
-from .errors import *
-from . import checks
+from . import errors, checks
 
 
 class Validator:
@@ -70,7 +69,7 @@ class Validator:
         node = self.root_node.get(path)
         try:
             getattr(checks, 'check_%s' % its.input_type.lower())(node.value, its)
-        except ValidationError as error:
+        except errors.ValidationError as error:
             self._report_error(path, error)
 
     def _validate_record(self, path, its):
@@ -81,9 +80,9 @@ class Validator:
         for key in its.keys.keys():
             try:
                 checks.check_record_key(node.value, key, its)
-            except ValidationError as error:
+            except errors.ValidationError as error:
                 self._report_error(path, error)
-                if isinstance(error, UnknownKey):
+                if isinstance(error, errors.UnknownKey):
                     continue
             if key in node.value:
                 self._validate_node('%s/%s' % (path, key), its.keys[key]['type'])
@@ -92,7 +91,7 @@ class Validator:
         node = self.root_node.get(path)
         try:
             record_its = checks.get_abstractrecord_type(node.value, its)
-        except ValidationError as error:
+        except errors.ValidationError as error:
             self._report_error(path, error)
         else:
             self._validate_record(path, record_its)
@@ -100,11 +99,11 @@ class Validator:
     def _validate_array(self, path, its):
         node = self.root_node.get(path)
         if not isinstance(node.value, list):
-            self._report_error(path, ValidationError("Expecting type Array"))
+            self._report_error(path, errors.ValidationError("Expecting type Array"))
             return
         try:
             checks.check_array(node.value, its)
-        except ValidationError as error:
+        except errors.ValidationError as error:
             self._report_error(path, error)
         for i, item in enumerate(node.value):
             self._validate_node('%s/%d' % (path, i), its.subtype)

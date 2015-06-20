@@ -7,9 +7,8 @@ Tests for format package.
 
 import unittest
 
-from .format import *
-from .format import _list_to_dict as list_to_dict
-from .format import _FormatSpec as FormatSpec
+from .format import InputTypeSpec, _FormatSpec as FormatSpec, \
+        _list_to_dict as list_to_dict
 
 
 class TestFormatSpec(unittest.TestCase):

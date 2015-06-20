@@ -5,45 +5,45 @@ Basic rules for data validation
 @author: Tomas Krizek
 """
 
-from .errors import *
+from . import errors
 
 
 def check_integer(value, its):
     if not isinstance(value, int):
-        raise ValidationTypeError("Expecting type Integer")
+        raise errors.ValidationTypeError("Expecting type Integer")
 
     if (value < its.min):
-        raise ValueTooSmall(its.min)
+        raise errors.ValueTooSmall(its.min)
 
     if (value > its.max):
-        raise ValueTooBig(its.max)
+        raise errors.ValueTooBig(its.max)
 
     return True
 
 
 def check_double(value, its):
     if not isinstance(value, (int, float)):
-        raise ValidationTypeError("Expecting type Double")
+        raise errors.ValidationTypeError("Expecting type Double")
 
     if (value < its.min):
-        raise ValueTooSmall(its.min)
+        raise errors.ValueTooSmall(its.min)
 
     if (value > its.max):
-        raise ValueTooBig(its.max)
+        raise errors.ValueTooBig(its.max)
 
     return True
 
 
 def check_bool(value, its):
     if not isinstance(value, bool):
-        raise ValidationTypeError("Expecting type Bool")
+        raise errors.ValidationTypeError("Expecting type Bool")
 
     return True
 
 
 def check_string(value, its):
     if not isinstance(value, str):
-        raise ValidationTypeError("Expecting type String")
+        raise errors.ValidationTypeError("Expecting type String")
 
     return True
 
@@ -52,7 +52,7 @@ def check_selection(value, its):
     if (value in its.values):
         return True
     else:
-        raise InvalidOption(value, its.name)
+        raise errors.InvalidOption(value, its.name)
 
 
 def check_filename(value, its):
@@ -64,19 +64,19 @@ def check_filename(value, its):
 
 def check_array(value, its):
     if not isinstance(value, (list, str)):
-        raise ValidationTypeError("Expecting type Array")
+        raise errors.ValidationTypeError("Expecting type Array")
 
     if len(value) < its.min:
-        raise NotEnoughItems(its.min)
+        raise errors.NotEnoughItems(its.min)
     elif len(value) > its.max:
-        raise TooManyItems(its.max)
+        raise errors.TooManyItems(its.max)
 
     return True
 
 
 def check_record_key(record, key, its):
     if not isinstance(record, dict):
-        raise ValidationTypeError("Expecting type Record")
+        raise errors.ValidationTypeError("Expecting type Record")
 
     # if key is not found in specifications, it is considered to be valid
     if key not in its.keys and key != 'TYPE':
@@ -92,7 +92,7 @@ def check_record_key(record, key, its):
             try:
                 record[key]
             except KeyError:
-                raise MissingKey(key, its.type_name)
+                raise errors.MissingKey(key, its.type_name)
 
     return True
 
@@ -104,12 +104,12 @@ def get_abstractrecord_type(record, its):
         try:
             type_ = its.default_descendant
         except AttributeError:
-            raise MissingAbstractRecordType()
+            raise errors.MissingAbstractRecordType()
     else:
         try:
             type_ = its.implementations[type_name]
         except KeyError:
-            raise InvalidAbstractRecordType(type_name, its.name)
+            raise errors.InvalidAbstractRecordType(type_name, its.name)
 
     return type_
 

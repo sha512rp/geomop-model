@@ -8,9 +8,7 @@ Tests for validator
 import unittest
 from unittest.mock import Mock
 
-from .validator import *
-from .errors import *
-from ..format import _FormatSpec as FormatSpec
+from . import validator
 from ..model import DataNode
 
 
@@ -61,7 +59,7 @@ class TestValidator(unittest.TestCase):
     its_abstract.name = 'MyAbstractRecord'
 
     def setUp(self):
-        self.v = Validator()
+        self.v = validator.Validator()
 
     def test_validate_scalar(self):
         node = DataNode(2, None, '/problem/1')
