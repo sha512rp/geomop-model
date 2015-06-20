@@ -17,8 +17,8 @@ def validate(input_=None, format_=None):
     its = parse_format(format_)
     validator = Validator()
 
-    data = parse_con(input_)
-    data = autoconvert(data, its)
+    input_data = parse_con(input_)
+    data = autoconvert(input_data, its)
     validator.validate(data, its)
 
     print(validator.console_log)
