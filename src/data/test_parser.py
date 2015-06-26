@@ -27,17 +27,6 @@ class TestConFileHandler(unittest.TestCase):
         self.assertEqual(refs['/c/0'], '/b/x')
         self.assertEqual(refs['/c/1'], '/a/y')
 
-    def test_circular_reference(self):
-        raw = {
-            'a': {'REF': '/b'},
-            'b': {'REF': '/c'},
-            'c': {'REF': '/a'}
-        }
-
-        root = parser._resolve_references(raw)
-        with self.assertRaises(parser.RefError):
-            root.get('/a').value
-
     def test_reference_error(self):
         raw = {
             'a': {'REF': '/b/x'},
@@ -86,5 +75,5 @@ class TestConFileHandler(unittest.TestCase):
         }
         root = parser._resolve_references(raw)
 
-        self.assertEqual(root.get('/a/y')._ref, root.get('/b')._ref)
+        self.assertEqual(root.get('/a/y')._ref, root.get('/b'))
 

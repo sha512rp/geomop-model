@@ -14,16 +14,6 @@ has a path that indicates its position in the tree.
 """
 
 
-def _circular_check(function):
-    """Runtime exception handler for circular references."""
-    def inner(*args, **kwargs):
-        try:
-            return function(*args, **kwargs)
-        except RuntimeError:
-            raise RefError("Circular reference detected!")
-    return inner
-
-
 class DataNode:
     """
     Represents a node in the tree structure.
@@ -37,13 +27,12 @@ class DataNode:
 
         parent and name parameters are to be ommitted for the root node.
         """
-        self._ref = self
+        self._ref = None
         self.parent = parent
         self.name = name
         self._initialize_value(data)
 
     @property
-    @_circular_check
     def value(self):
         """
         Returns the contents of a node.
@@ -54,37 +43,30 @@ class DataNode:
         If this node refers to another, its value is returned instead.
         """
         ref = self._ref
-        if ref == ref._ref:
-            # reference points to itself -> end-point value
-            return ref._value
+        if ref is None:
+            return self._value
         else:
             # multi-level reference, resolve recursively
             return ref.value
 
     @value.setter
-    @_circular_check
     def value(self, value):
         """Setter for value. Resolves references."""
         ref = self._ref
-        if ref == ref._ref:
-            # reference points to itself -> end-point value
-            ref._value = value
+        if ref is None:
+            self._value = value
         else:
             # multi-level reference, resolve recursively
             ref.value = value
 
     @property
     def ref(self):
-        """Returns either the reference (if set) of self."""
-        if self._ref == self:
-            return None
+        """Returns the reference (or None)."""
         return self._ref
 
     @ref.setter
     def ref(self, value):
         """Sets the reference of this node to another."""
-        if value is None:
-            value = self
         self._ref = value
 
     @property
@@ -160,7 +142,7 @@ class DataNode:
         return node
 
     def __repr__(self):
-        ref_text = ' (ref {reference})'.format(reference=self._ref) if self._ref != self else ''
+        ref_text = ' (ref {reference})'.format(reference=self._ref) if self._ref is not None else ''
         return 'DataNode({location}{ref_text})'.format(location=self.path, ref_text=ref_text)
 
 
