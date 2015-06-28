@@ -30,6 +30,19 @@ def parse_con(filename):
     return _resolve_references(data)
 
 
+def con_to_yaml(filename_in, filename_out):
+    """
+    Converts the con file into yaml file.
+    Does not resolve references.
+    """
+    import yaml
+    with open(filename_in) as con_file:
+        con = con_file.read()
+        data = _decode_con(con)
+        with open(filename_out, 'w') as stream:
+            yaml.dump(data, stream)
+
+
 def _resolve_references(data):
     """
     Resolves references in data. Replaces REF keys with actual Python
